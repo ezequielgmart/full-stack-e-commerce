@@ -1,5 +1,6 @@
-# full-stack-e-shop
-Full stack e commerce platform for a tech shop.  Powered by react, python. 
+# Full Stack E-Commerce Platform
+
+Full stack e commerce platform for a tech shop.  Powered by React, Python. 
 
 ## Product Management
 Product Catalog: The store needs a system to create, edit, and delete products. Each product should have attributes such as name, description, images, price, category, and status (e.g., available, out of stock).
