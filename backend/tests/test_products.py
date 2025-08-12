@@ -16,10 +16,11 @@ def test_search_products_by_name(api_client: TestClient):
 
 def test_get_by_category_id(api_client: TestClient):
     category_id = 'b30a1c8f-28c0-43f5-a8e9-d757d54403c1'
-    response = api_client.get(f"/products/{category_id}?limit=20")
+    response = api_client.get(f"/products/all/{category_id}?limit=10")
 
     assert response.status_code == 200
-    assert len(response.json()) == 20
+    assert len(response.json()) == 10
+
 
 def test_get_by_product_id(api_client: TestClient):
 

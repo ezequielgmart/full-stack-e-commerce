@@ -13,14 +13,6 @@ router = APIRouter()
 * Por categoria
 
 """
-# @router.get(
-#     "/",
-#     response_model=List[Product],
-#     summary="Obtener todos los products",
-#     description="Retorna una lista de todos los productos disponibles en el sistema."
-# )
-# async def get_products(controller: ProductController = Depends(get_product_controller)):
-#     return await controller.get_all()
 @router.get(
     "/",
     response_model=List[Product],
@@ -52,8 +44,9 @@ async def get_products(
     )
 
 # get all the products by category
+# all/ => added para diferenciar el product_id de el general por categoria.  
 @router.get(
-    "/{category_id}",
+    "/all/{category_id}",
     response_model=List[Product],
     summary="Obtener todos los products",
     description="Retorna una lista de todos los productos disponibles en el sistema."

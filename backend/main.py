@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from routes.v1.products import router as product_router
+from routes.v1.auth import router as auth_router
 from config.connect import create_db_pool
 
 from contextlib import asynccontextmanager
@@ -30,6 +31,12 @@ app.include_router(
     product_router,
     prefix="/products",
     tags=["Product"]
+)
+
+app.include_router(
+    auth_router,
+    prefix="/auth",
+    tags=["Auth"]
 )
 
 # // start the development server

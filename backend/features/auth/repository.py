@@ -1,0 +1,10 @@
+from entities.users import User
+from pygem.main import GemRepository
+from config.connect import DbPool
+from entities.migrations import _users_gem
+
+class AuthRepository(GemRepository):
+
+    def __init__(self, pool:DbPool):
+        self.gem = _users_gem
+        super().__init__(model=User, gem=self.gem, pool=pool)

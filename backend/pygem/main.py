@@ -189,6 +189,11 @@ class SingleQueries:
         all_fields_str = self.schema.convert_fields_to_string(all_fields)
         return f"SELECT {all_fields_str} FROM {self.schema.get_table()} WHERE {key} = $1"
     
+    # una query sql para logins. 
+    def select_username_login(self):
+        
+        return self.select_query_with_key(key="username")
+        
     """
     @method: Generates an SQL query to select all records from the table with 
     limits ideal for paginated results.
@@ -351,6 +356,19 @@ class DBManager:
             records = await conn.fetch(query)
             return [dict(record) for record in records]
     
+    # login
+    async def get_by_username(self, username:str)-> Dict[str, Any]:
+
+        query = self.schema_entity.queries.select_username_login()
+        async with self.pool.acquire() as conn: 
+            records = await conn.fetch(query, username)
+            if records:
+            # records[0] es el objeto de un solo registro.
+            # Puedes convertirlo a un dict.
+                return dict(records[0]) 
+            
+        return None
+        
     """
     @method: Gets a single record by its primary key.
     @params: 
@@ -535,6 +553,13 @@ class GemRepository:
     """
     async def get_by_id(self, key_value) -> T | None:
         db_data = await self.manager.get_by_principal_key(key_value)
+        if db_data:
+            return self.model(**db_data)
+        return None
+    
+    # login
+    async def get_by_username(self, key_value) -> T | None:
+        db_data = await self.manager.get_by_username(key_value)
         if db_data:
             return self.model(**db_data)
         return None
