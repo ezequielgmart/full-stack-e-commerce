@@ -18,6 +18,20 @@ DB_CONFIG = {
     'port': int(os.getenv('DB_PORT'))
 }
 
+# TODO: arreglar esto del config.
+# TOKEN_CONFIG = {
+#     'secret_JWT_KEY': os.getenv('SECRET_JWT_KEY'),
+#     'algorithm': os.getenv('ALGORITHM '),
+#     'access_token_expire_minutes': int(os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES '))
+# }
+
+TOKEN_CONFIG = {
+    'secret_JWT_KEY': "Gavilan o paloma",
+    'algorithm': "HS256",
+    'access_token_expire_minutes': 30
+}
+
+
 async def create_db_pool() -> asyncpg.Pool:
     """
     Crea y retorna un pool de conexiones a la base de datos.
