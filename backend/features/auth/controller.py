@@ -1,10 +1,13 @@
 from fastapi import HTTPException, status
 from typing import Optional
-from entities.auth import LoginRequest, TokenData
+from entities.auth import LoginRequest, TokenData, RegisterRequest, NewUserResponse
+from entities.users import User
 from config.connect import TOKEN_CONFIG
 from .service import AuthService
-import bcrypt
+import uuid
 
+# jwt validation
+import bcrypt
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from datetime import datetime, timedelta,  timezone
@@ -54,6 +57,23 @@ class AuthController:
         # FastAPI recomienda un formato específico para los tokens de portador (bearer tokens)
         return {"access_token": access_token, "token_type": "bearer"}
 
+    async def register(self, data:RegisterRequest) -> User:
+        
+        # hay que hashear la contraseña antes de pasar al servicio
+        hashed_password = self.get_password_hash(data.password)
+
+        data_for_service = {
+            "user_id":str(uuid.uuid4()),
+            "email":data.email,
+            "username":data.username,   
+            "password":str(hashed_password)
+        }
+
+        new_user = NewUserResponse(**data_for_service)
+
+        return await self.service.register(new_user)
+
+
     # Hashing y verificación de contraseñas
     def get_password_hash(self, password: str):
         return pwd_context.hash(password)
@@ -64,16 +84,6 @@ class AuthController:
             hashed_password = hashed_password.encode('utf-8')
 
         return pwd_context.verify(plain_password, hashed_password)
-    
-    
-    # def verify_password(password: str, hashed_password: str) -> bool:
-    #     """Verifica una contraseña contra el hash almacenado."""
-    #     # Primero, comprueba si el hash es una cadena. Si lo es, lo codifica a bytes.
-    #     if isinstance(hashed_password, str):
-    #         hashed_password = hashed_password.encode('utf-8')
-        
-    #     # Ahora que sabes que es de tipo bytes, lo pasas a bcrypt
-    #     return bcrypt.checkpw(password.encode('utf-8'), hashed_password)
 
     
     def create_access_token(self, data: dict, expires_delta: Optional[timedelta] = None): 
@@ -130,3 +140,7 @@ class AuthController:
         if user is None:
             raise credentials_exception
         return user
+
+    def generate_user_id(self, username:str) -> uuid.UUID:
+        new_uuid = uuid.uuid4(username)
+        return new_uuid

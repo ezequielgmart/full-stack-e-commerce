@@ -7,6 +7,7 @@ TEST_USER = "admin"
 TEST_PASSWORD = "123456789"
 TEST_IS_ADMIN = True
 
+
 def test_login(api_client: TestClient):
     """
     Una prueba end-to-end que usa el cliente de prueba.

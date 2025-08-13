@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends
-
-from entities.auth import LoginRequest, TokenData, TokenResponse
+from entities.auth import LoginRequest, NewUserResponse, RegisterRequest
 from fastapi.security import OAuth2PasswordBearer
 from features.auth.dependencies import get_auth_controller
 from features.auth.controller import AuthController
@@ -40,7 +39,20 @@ async def login(
     ):
 
     return await controller.login(auth_login_request)
+
+@router.post(
+    "/register",
+    summary="...",
+    description="..."
     
+)
+async def register(
+    new_user:RegisterRequest,
+    controller:AuthController = Depends(get_auth_controller)
+    ):
+
+    return await controller.register(new_user)
+
     # password = '12345679'
     # hashed_password = b'$2b$12$2tQkTL7lYSF36YTFSK.Ile/iVWapnDVx0EgQsuV9NoQVnTf6dkBli'
 

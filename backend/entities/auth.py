@@ -1,12 +1,35 @@
 from pydantic import BaseModel
 from typing import Optional
 
+# ************** REQUESTS****************
+# Comming from the register information (the form)
+class RegisterRequest(BaseModel):
+    username:str
+    password:str
+    email:str
+
 class LoginRequest(BaseModel):
 
     username:str
     password:str
     is_admin:bool
-    
+
+
+# Modelo que define la estructura del token (payload)
+class TokenData(BaseModel):
+
+    user_id: Optional[str] = None
+
+# ****************** RESPONSES FROM SERVER
+# with the password hashed, the user_id added, and the is_admin field set to false
+class NewUserResponse(BaseModel):
+    user_id:str
+    username:str
+    password:str
+    email:str
+    is_admin: bool = False
+
+
 # Modelo para la respuesta que contendrá el token
 class TokenResponse(BaseModel):
 
@@ -17,7 +40,3 @@ class TokenResponse(BaseModel):
     # tiempo de expiracion
     # expires_in: Optional[int] = None
 
-# Modelo que define la estructura del token (payload)
-class TokenData(BaseModel):
-
-    user_id: Optional[str] = None
