@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from typing import Optional
 
 # ************** REQUESTS****************
@@ -6,7 +6,7 @@ from typing import Optional
 class RegisterRequest(BaseModel):
     username:str
     password:str
-    email:str
+    email:EmailStr
 
 class LoginRequest(BaseModel):
 
@@ -26,7 +26,7 @@ class NewUserResponse(BaseModel):
     user_id:str
     username:str
     password:str
-    email:str
+    email:EmailStr
     is_admin: bool = False
 
 
