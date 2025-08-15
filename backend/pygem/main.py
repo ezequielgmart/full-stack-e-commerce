@@ -189,10 +189,6 @@ class SingleQueries:
         all_fields_str = self.schema.convert_fields_to_string(all_fields)
         return f"SELECT {all_fields_str} FROM {self.schema.get_table()} WHERE {key} = $1"
     
-    # una query sql para logins. 
-    def select_username_login(self):
-        
-        return self.select_query_with_key(key="username")
         
     """
     @method: Generates an SQL query to select all records from the table with 
@@ -254,36 +250,21 @@ class SingleQueries:
         return f"""SELECT * FROM {self.schema.get_table()} WHERE {key_value} ILIKE $1 ORDER BY product_id LIMIT $2 OFFSET $3"""
         
        
-    """
-    @method: Generates an SQL query to retrieve from the database a main table with 2 many to many. 
-    For this example we're going to be getting the stock of a product by its id, along with the its category and all the information. 
-
-    @params: None
-    @return: A string with the SQL query.
-    """
+  
     # TODO: 
     # hacer la query mas custom
-    def select_join_by_main_id(self) -> str:
+    def select_by_user_id(self) -> str:
 
-        return f"""SELECT
-        p.*,
-        pi.stock,
-        c.category_id,
-        c.name as category_name  -- Alias para evitar colisión de nombres si 'p' también tiene una columna 'name'
-    FROM
-        products p
-    JOIN
-        products_inventory pi ON p.product_id = pi.product_id
-    JOIN
-        product_categories pc ON p.product_id = pc.product_id
-    JOIN
-        categories c ON pc.category_id = c.category_id
-    WHERE
-        p.product_id = $1"""
+        all_fields = self.schema.get_all_table_fields()
+        all_fields_str = self.schema.convert_fields_to_string(all_fields)
+        return f"SELECT {all_fields_str} FROM {self.schema.get_table()} WHERE user_id=$1"
 
+    # una query sql para logins. 
+    def select_username_login(self):
+        
+        return self.select_query_with_key(key="username")
 
     """
-    
     @method: Generates an SQL query to insert a new record.
     @params: None
     @return: A string with the SQL query.
@@ -384,6 +365,15 @@ class DBManager:
         
         return None
 
+    """
+        Esto deberia devolver la informacion de dos tablas conectadas si pasamos el id del usuario. 
+    """ 
+    async def get_join_by_user_id(self, user_id:str)-> Dict[str, Any]:
+        query = self.schema_entity.queries.select_by_user_id()
+
+        async with self.pool.acquire() as conn:
+            records = await conn.fetch(query, user_id)
+            return [dict(record) for record in records]
 
     # login
     async def get_by_username(self, username:str)-> Dict[str, Any]:
@@ -489,6 +479,7 @@ class DBManager:
     """
     async def create(self, data: dict) -> Dict[str, Any] | None:
         insert_query = self.schema_entity.queries.insert_query()
+        
         values = [data.get(field.name) for field in self.schema_entity.fields]
 
         async with self.pool.acquire() as conn:
@@ -560,6 +551,13 @@ class GemRepository:
         db_data = await self.manager.get_all()
         return [self.model(**data) for data in db_data]
 
+    # TODO Doc string
+    async def get_all_by_user_id(self, user_id: str) -> List[T]:
+        # 1. get_join_by_user_id returns a single record (dict) or None
+        # db_data = await self.manager.get_join_by_user_id(user_id)
+
+        db_data = await self.manager.get_join_by_user_id(user_id)
+        return [self.model(**data) for data in db_data]
 
     """
     @method: Gets a record by its primary key and converts it to a model object.

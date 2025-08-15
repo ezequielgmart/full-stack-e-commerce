@@ -28,7 +28,7 @@ DB_CONFIG = {
 TOKEN_CONFIG = {
     'secret_JWT_KEY': "Gavilan o paloma",
     'algorithm': "HS256",
-    'access_token_expire_minutes': 30
+    'access_token_expire_minutes': 1000
 }
 
 

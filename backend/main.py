@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from routes.v1.products import router as product_router
 from routes.v1.auth import router as auth_router
 from routes.v1.profiles import router as profile_router
+from routes.v1.shipping_addresses import router as shipping_addresses_router
 from config.connect import create_db_pool
 
 from contextlib import asynccontextmanager
@@ -44,4 +45,10 @@ app.include_router(
     profile_router,
     prefix="/profile",
     tags=["profile"]
+)
+
+app.include_router(
+    shipping_addresses_router,
+    prefix="/addresses",
+    tags=["Addresses"]
 )

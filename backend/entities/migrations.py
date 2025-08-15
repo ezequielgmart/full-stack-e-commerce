@@ -188,8 +188,9 @@ _shipping_addresses_gem = SingleGenericSchema(
     table='shipping_addresses',
     primary_key='address_id',
     fields=[
+        # cambie manualmente el de user id
         Field(is_primary_key=True, name='address_id', type='uuid', is_null=False),
-        Field(is_primary_key=True, name='user_id', type='uuid', is_null=False),
+        Field(is_primary_key=False, name='user_id', type='uuid', is_null=False),
         Field(is_primary_key=False, name='recipient_name', type='varchar', is_null=False),
         Field(is_primary_key=False, name='street_address', type='varchar', is_null=False),
         Field(is_primary_key=False, name='city', type='varchar', is_null=False),

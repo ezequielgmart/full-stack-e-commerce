@@ -1,6 +1,7 @@
 from fastapi import HTTPException, status
 from entities.profiles import Profile, ProfileRegister
 from .service import ProfileService
+from asyncpg.exceptions import UniqueViolationError
 
 class ProfileController:
 
@@ -19,7 +20,7 @@ class ProfileController:
         return result
 
     async def create_profile(self, current_user_id:str, data:ProfileRegister) -> Profile:
-
+        # validar que el usuario no tenga un perfil ya creado. 
         try:
             
             data_for_service = {
@@ -29,6 +30,7 @@ class ProfileController:
                 "gender":data.gender
             }
 
+            
             new_profile = await self.service.create_profile(Profile(**data_for_service))
 
             return new_profile
@@ -38,7 +40,11 @@ class ProfileController:
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Token expiration time is not configured correctly."
             )
-    
+        except UniqueViolationError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="User has a profile already."
+            )
         
 
 

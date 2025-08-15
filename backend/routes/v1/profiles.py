@@ -26,10 +26,10 @@ async def create(
 
 @router.get(
     "/",
-    summary="...",
+    summary="return the profile of the authenticated user",
     description="..."
 )
-async def create(
+async def get_by_current_user(
     response_model = Profile,
     profile_controller: ProfileController = Depends(get_profile_controller),
     current_user: User = Depends(get_current_user) # Usa la dependencia de autenticación
