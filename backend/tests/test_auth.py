@@ -60,7 +60,7 @@ def test_get_protected_user_profile(api_client: TestClient):
     
     # 4. Hacer la petición GET a la ruta protegida con el token en el encabezado
     # Asume que la ruta protegida es "/users/me" y que no requiere user_id.
-    protected_response = api_client.get("user/public", headers=headers)
+    protected_response = api_client.get("auth/public", headers=headers)
     
     # 5. Verificar el estado de la respuesta y el contenido
     assert protected_response.status_code == 200
@@ -78,7 +78,7 @@ def test_protected_route_without_token(api_client: TestClient):
     """
     Verifica que la ruta protegida devuelve 401 si no hay token.
     """
-    response = api_client.get("user/public")
+    response = api_client.get("auth/public")
     assert response.status_code == 401
     assert "detail" in response.json()
     assert response.json()["detail"] == "Not authenticated"

@@ -12,7 +12,7 @@ class LoginRequest(BaseModel):
 
     username:str
     password:str
-    is_admin:bool
+
 
 
 # Modelo que define la estructura del token (payload)

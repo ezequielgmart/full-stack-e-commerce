@@ -17,3 +17,16 @@ class ProductRequest(BaseModel):
     name: str
     description: str
     unit_price: float    
+
+
+class ProductCategoryStock(BaseModel):
+
+    product_id: uuid.UUID
+    name: str
+    description:str
+    unit_price:float
+    stock:int
+    category_id:uuid.UUID
+    category_name:str
+
+   

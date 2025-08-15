@@ -22,7 +22,7 @@ def test_get_by_category_id(api_client: TestClient):
     assert len(response.json()) == 10
 
 
-def test_get_by_product_id(api_client: TestClient):
+def test_get_product_by_id(api_client: TestClient):
 
     product_id = '2a4b6c8d-0e1f-2a3b-4c5d-6e7f8a9b0c1d'
     response = api_client.get(f"/products/{product_id}")

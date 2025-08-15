@@ -42,8 +42,6 @@ app.include_router(
 
 app.include_router(
     profile_router,
-    prefix="/user",
-    tags=["User"]
+    prefix="/profile",
+    tags=["profile"]
 )
-# // start the development server
-# uvicorn main:app --reload

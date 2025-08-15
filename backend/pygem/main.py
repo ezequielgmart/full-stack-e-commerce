@@ -253,19 +253,37 @@ class SingleQueries:
         
         return f"""SELECT * FROM {self.schema.get_table()} WHERE {key_value} ILIKE $1 ORDER BY product_id LIMIT $2 OFFSET $3"""
         
-        # SELECT 
-        #     * FROM 
-        #     products 
-        # WHERE 
-        #     name ILIKE '%AMD%' 
-        # ORDER BY 
-        #     product_id 
-        # LIMIT 
-        #     $2 
-        # OFFSET 
-        #     $3;
+       
+    """
+    @method: Generates an SQL query to retrieve from the database a main table with 2 many to many. 
+    For this example we're going to be getting the stock of a product by its id, along with the its category and all the information. 
+
+    @params: None
+    @return: A string with the SQL query.
+    """
+    # TODO: 
+    # hacer la query mas custom
+    def select_join_by_main_id(self) -> str:
+
+        return f"""SELECT
+        p.*,
+        pi.stock,
+        c.category_id,
+        c.name as category_name  -- Alias para evitar colisión de nombres si 'p' también tiene una columna 'name'
+    FROM
+        products p
+    JOIN
+        products_inventory pi ON p.product_id = pi.product_id
+    JOIN
+        product_categories pc ON p.product_id = pc.product_id
+    JOIN
+        categories c ON pc.category_id = c.category_id
+    WHERE
+        p.product_id = $1"""
+
 
     """
+    
     @method: Generates an SQL query to insert a new record.
     @params: None
     @return: A string with the SQL query.
@@ -356,6 +374,17 @@ class DBManager:
             records = await conn.fetch(query)
             return [dict(record) for record in records]
     
+    async def get_product_by_id(self, product_id:str)-> Dict[str, Any]:
+        query = self.schema_entity.queries.select_join_by_main_id()
+
+        async with self.pool.acquire() as conn: 
+            records = await conn.fetch(query, product_id)
+            if records:
+                return dict(records[0])
+        
+        return None
+
+
     # login
     async def get_by_username(self, username:str)-> Dict[str, Any]:
 
@@ -434,20 +463,7 @@ class DBManager:
         - offset: The number of records to skip from the beginning.
     @return: A list of dictionaries of items, or None if no records are found.
     """
-    # async def get_all_many_to_many_paginated(self, 
-    #     many_to_many_table: str, 
-    #     second_table: str, 
-    #     second_table_main_key: str, 
-    #     filter_key_value: str,  # Nuevo parámetro para filtrar por el ID
-    #     limit: int, 
-    #     offset: int
-    # ) -> List[Dict[str, Any]] | None:
-        
-    #     query = self.schema_entity.queries.select_query_paginated_with_many_to_many(many_to_many_table=many_to_many_table, second_table=second_table, second_table_main_key=second_table_main_key)
-    #     async with self.pool.acquire() as conn:
-    #         records = await conn.fetch(query, filter_key_value, limit, offset)
-    #         print(records)
-    #         return [dict(record) for record in records]
+
     async def get_all_many_to_many_paginated(self, 
         many_to_many_gem: Schema, 
         second_table_gem: Schema,

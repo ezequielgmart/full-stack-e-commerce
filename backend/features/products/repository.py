@@ -34,7 +34,7 @@ class ProductRepository(GemRepository):
         )      
 
         return result     
-
+    
     async def get_products_by_name_like(
             self, 
             key_value:str,
@@ -53,3 +53,9 @@ class ProductRepository(GemRepository):
 
         return result 
 
+
+    async def get_product_by_id_all_details(self, product_id:str):
+
+        result = await self.manager.get_product_by_id(product_id)
+
+        return result 

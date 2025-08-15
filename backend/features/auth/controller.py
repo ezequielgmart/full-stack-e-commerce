@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 from typing import Optional
 from entities.auth import LoginRequest, TokenData, RegisterRequest, NewUserResponse
-from entities.users import User
+from entities.users import User, UserPublic
 from config.connect import TOKEN_CONFIG
 from .service import AuthService
 import uuid
@@ -22,6 +22,7 @@ class AuthController:
         self.service = service
 
     async def login(self, user_data:LoginRequest):
+
         result = await self.service.login(user_data.username)
 
         if not result:
@@ -144,3 +145,17 @@ class AuthController:
     def generate_user_id(self, username:str) -> uuid.UUID:
         new_uuid = uuid.uuid4(username)
         return new_uuid
+    
+    async def get_public_user(self, user_id:str) -> UserPublic:
+        # aqui deberia de estar la verificacion del token.
+        #  
+        user = await self.service.get_public_user(user_id)  
+
+        if not user:
+            # Raise an HTTPException with a 404 status code
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"User not found"
+            )
+        
+        return user   
