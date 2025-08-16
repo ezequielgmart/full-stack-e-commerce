@@ -22,7 +22,9 @@ async def get_db_pool():
 async def get_auth_repository(pool:DbPool = Depends(get_db_pool)):
     return AuthRepository(pool=pool)
 
-async def get_auth_service(repository: AuthRepository = Depends(get_auth_repository)):
+async def get_auth_service(
+        repository: AuthRepository = Depends(get_auth_repository)
+        ):
     return AuthService(repository=repository)
 
 async def get_auth_controller(service: AuthService = Depends(get_auth_service)):
@@ -72,7 +74,7 @@ Explicit Expiration Check: The jwt.decode function handles the exp claim by defa
 # 2. Create the dependency to get the current user
 async def get_current_user(
     token: str = Depends(oauth2_scheme),
-    controller: AuthController = Depends(get_auth_service)
+    controller: AuthController = Depends(get_auth_controller)
 ):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

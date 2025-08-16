@@ -1,5 +1,5 @@
 import uuid
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 class User(BaseModel):
 
@@ -18,3 +18,16 @@ class UserPublic(BaseModel):
     email:str
     is_admin:bool
 
+# ****************** RESPONSES FROM SERVER
+# with the password hashed, the user_id added, and the is_admin field set to false
+class NewUserResponse(BaseModel):
+    user_id:str
+    username:str
+    password:str
+    email:EmailStr
+    is_admin: bool = False
+
+class RegisterRequest(BaseModel):
+    username:str
+    password:str
+    email:EmailStr

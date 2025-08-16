@@ -58,21 +58,22 @@ class AuthController:
         # FastAPI recomienda un formato específico para los tokens de portador (bearer tokens)
         return {"access_token": access_token, "token_type": "bearer"}
 
-    async def register(self, data:RegisterRequest) -> User:
+    """ ESTO FUE MOVIDO A USERS """
+    # async def register(self, data:RegisterRequest) -> User:
         
-        # hay que hashear la contraseña antes de pasar al servicio
-        hashed_password = self.get_password_hash(data.password)
+    #     # hay que hashear la contraseña antes de pasar al servicio
+    #     hashed_password = self.get_password_hash(data.password)
 
-        data_for_service = {
-            "user_id":str(uuid.uuid4()),
-            "email":data.email,
-            "username":data.username,   
-            "password":str(hashed_password)
-        }
+    #     data_for_service = {
+    #         "user_id":str(uuid.uuid4()),
+    #         "email":data.email,
+    #         "username":data.username,   
+    #         "password":str(hashed_password)
+    #     }
 
-        new_user = NewUserResponse(**data_for_service)
+    #     new_user = NewUserResponse(**data_for_service)
 
-        return await self.service.register(new_user)
+    #     return await self.service.register(new_user)
 
 
     # Hashing y verificación de contraseñas
@@ -159,3 +160,6 @@ class AuthController:
             )
         
         return user   
+    
+    async def get_user_by_id(self, user_id:str)-> UserPublic:
+        return await self.service.get_user_by_id(user_id)

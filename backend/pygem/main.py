@@ -168,6 +168,13 @@ class SingleQueries:
         all_fields_str = self.schema.convert_fields_to_string(all_fields)
         return f"SELECT {all_fields_str} FROM {self.schema.get_table()}"
 
+    
+    def select_products_on_cart_query(self) -> str:
+        all_fields = self.schema.get_all_table_fields()
+        all_fields_str = self.schema.convert_fields_to_string(all_fields)
+        
+        return f"SELECT {all_fields_str} FROM {self.schema.get_table()}"
+    
     """
     @method: Generates an SQL query to select a record by its primary key.
     @params: None
@@ -399,7 +406,33 @@ class DBManager:
         async with self.pool.acquire() as conn:
             record = await conn.fetchrow(query, key_value)
             return dict(record) if record else None
+        
+    async def get_all_by_key(self, key_name: str, key_value: str) -> list[dict[str, any]] | None:
+        
+        # 1. Get the list of all valid field names from your schema.
+        valid_fields = self.schema_entity.get_all_table_fields()
+        
+        # 2. Check if the provided key_name exists in the list of valid fields.
+        if key_name not in valid_fields:
+            # 3. If it does not exist, raise a ValueError with a clear message.
+            raise ValueError(f"Invalid field name")
 
+        # 4. If the key_name is valid, proceed with building and executing the query.
+        query = self.schema_entity.queries.select_query_with_key(key_name)
+
+        async with self.pool.acquire() as conn:
+            records = await conn.fetch(query, key_value)
+            return [dict(record) for record in records]
+        
+    # luego debo de personalizar esto para hacerlo generico. 
+    # por el momento solo quiero que me devuelva la info de los productos mas la cantidad actual de esos productos en el carrito 
+           #     
+    async def get_all_products_on_cart(self) -> List[Dict[str, Any]]:
+        query = self.schema_entity.queries.select_query()
+        async with self.pool.acquire() as conn:
+            records = await conn.fetch(query)
+            return [dict(record) for record in records]
+        
     """
     @method: Select all the records from the db but using a paginated result
     @params: 
@@ -486,6 +519,16 @@ class DBManager:
             record = await conn.fetchrow(insert_query, *values)
             return dict(record) if record else None
 
+    # metodo para crear un nuevo item pero recibiendo una conexion abierta, esto con el fin de ejectuar transacciones SQL 
+    async def create_with_transaction(self, data:dict ,conn: asyncpg.Connection) -> Dict[str, Any] | None:
+
+        insert_query = self.schema_entity.queries.insert_query()
+        values = [data.get(field.name) for field in self.schema_entity.fields]
+
+        # Usa la conexión pasada como parámetro
+        record = await conn.fetchrow(insert_query, *values)
+        return dict(record) if record else None
+
     """
     @method: Updates a record by its primary key.
     @params:
@@ -552,6 +595,14 @@ class GemRepository:
         return [self.model(**data) for data in db_data]
 
     # TODO Doc string
+    async def get_by_user_id(self, user_id: str) -> T:
+        # 1. get_join_by_user_id returns a single record (dict) or None
+        # db_data = await self.manager.get_join_by_user_id(user_id)
+
+        db_data = await self.manager.get_join_by_user_id(user_id)
+        return [self.model(**data) for data in db_data]
+    
+    # TODO Doc string
     async def get_all_by_user_id(self, user_id: str) -> List[T]:
         # 1. get_join_by_user_id returns a single record (dict) or None
         # db_data = await self.manager.get_join_by_user_id(user_id)
@@ -599,6 +650,25 @@ class GemRepository:
     """
     async def create(self, data: T) -> T | None:
         db_data = await self.manager.create(data.model_dump())
+        if db_data:
+            return self.model(**db_data)
+        return None
+    
+    # para crear un nuevo objeto pero no es necesario devolver el objeto creado, solo si fue exitioso o no 
+    async def create_no_returning(self, data: T) -> bool:
+
+        db_data = await self.manager.create(data.model_dump())
+
+        if db_data:
+            return True
+        return False
+
+
+    # TODO: doc strimgs Por el momento es para crear una transaccion.
+    async def create_with_transaction(self, data: T, conn: asyncpg.Connection = None) -> T | None:
+        # Convert the Pydantic model to a dictionary using .model_dump()
+        db_data = await self.manager.create_with_transaction(data.model_dump(), conn)
+
         if db_data:
             return self.model(**db_data)
         return None
