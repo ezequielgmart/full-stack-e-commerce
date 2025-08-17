@@ -4,8 +4,6 @@ from entities.auth import NewUserResponse # solo tiene nombre y password
 from entities.shopping_cart import ShoppingCart
 from features.shopping_carts.repository import ShoppingCartRepository
 from .repository import AuthRepository
-import datetime 
-import uuid
 
 from entities.users import User, UserPublic
 

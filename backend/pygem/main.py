@@ -80,14 +80,6 @@ class Schema:
         return self.primary_key
 
     """
-    @method: Gets the table's alias (in this case, the same name).
-    @params: None
-    @return: The table alias as a string.
-    """
-    def get_alias(self) -> str:
-        return self.table
-    
-    """
     @method: Gets a list of the names of all table fields.
     @params: None
     @return: A list of strings with the field names.
@@ -172,7 +164,7 @@ class SingleQueries:
     def select_products_on_cart_query(self) -> str:
         all_fields = self.schema.get_all_table_fields()
         all_fields_str = self.schema.convert_fields_to_string(all_fields)
-        
+
         return f"SELECT {all_fields_str} FROM {self.schema.get_table()}"
     
     """
@@ -207,6 +199,9 @@ class SingleQueries:
         all_fields = self.schema.get_all_table_fields()
         all_fields_str = self.schema.convert_fields_to_string(all_fields)
         return f"SELECT {all_fields_str} FROM {self.schema.get_table()} ORDER BY {self.schema.get_main_key()} ASC LIMIT $1 OFFSET $2"
+    
+    def select_items_by_ids_query(self):
+        return f"SELECT * FROM {self.schema.get_table()} WHERE {self.schema.get_main_key()} = ANY($1::uuid[])"
     
     """
     @method: Generates an SQL query to select all records from the table with 
@@ -252,12 +247,11 @@ class SingleQueries:
         return query
     
     # key_value is the name of the table field like name, description, etc
-    def select_paginated_with_like_query(self, key_value:str):
-        
-        return f"""SELECT * FROM {self.schema.get_table()} WHERE {key_value} ILIKE $1 ORDER BY product_id LIMIT $2 OFFSET $3"""
-        
-       
-  
+    def select_paginated_with_like_query(self, field_name:str):
+        if self.validate_fields(field_name):
+
+            return f"""SELECT * FROM {self.schema.get_table()} WHERE {field_name} ILIKE $1 ORDER BY product_id LIMIT $2 OFFSET $3"""
+    
     # TODO: 
     # hacer la query mas custom
     def select_by_user_id(self) -> str:
@@ -270,7 +264,14 @@ class SingleQueries:
     def select_username_login(self):
         
         return self.select_query_with_key(key="username")
+    
+    def select_products_by_its_id_with_stock_query(self): 
+        main_table = self.schema.get_table()
+        main_key = self.schema.get_main_key()
 
+        query = f"SELECT p.product_id, p.unit_price, pi.stock FROM {main_table} AS p JOIN products_inventory AS pi ON p.{main_key} = pi.product_id WHERE p.{main_key} = ANY($1::uuid[])"
+
+        return query
     """
     @method: Generates an SQL query to insert a new record.
     @params: None
@@ -306,6 +307,24 @@ class SingleQueries:
         all_fields_str = self.schema.convert_fields_to_string(self.schema.get_all_table_fields())
         return f"DELETE FROM {self.schema.get_table()} WHERE {self.schema.get_main_key()} = $1 RETURNING {all_fields_str}"
 
+    def delete_query_customized_field_query(self, field_name:str) -> str:
+        if self.validate_fields(field_name):
+
+            return f"DELETE FROM {self.schema.get_table()} WHERE {field_name} = $1 "
+
+    # util para validar que un field name mandado como parametro 
+    # realmente pertenece a la lsita de fields validso del schema. 
+    # Esto con el fin de evitar la SQL inyection
+
+    def validate_fields(self, field_name:str) -> bool:
+        # tomar todos los fields
+        all_fields = self.schema.get_all_table_fields()
+
+        if field_name not in all_fields:
+
+            raise Exception("Invalid request 5555")
+
+        return True
 
 # ---
 """
@@ -381,6 +400,8 @@ class DBManager:
         async with self.pool.acquire() as conn:
             records = await conn.fetch(query, user_id)
             return [dict(record) for record in records]
+        
+
 
     # login
     async def get_by_username(self, username:str)-> Dict[str, Any]:
@@ -426,7 +447,7 @@ class DBManager:
         
     # luego debo de personalizar esto para hacerlo generico. 
     # por el momento solo quiero que me devuelva la info de los productos mas la cantidad actual de esos productos en el carrito 
-           #     
+            #     
     async def get_all_products_on_cart(self) -> List[Dict[str, Any]]:
         query = self.schema_entity.queries.select_query()
         async with self.pool.acquire() as conn:
@@ -441,7 +462,7 @@ class DBManager:
     @return: A list of items limited to the pagination
     """
     async def get_all_paginated(self, limit:int,offset:int) -> List[Dict[str, Any]] | None:
-       
+        
         query = self.schema_entity.queries.select_query_with_limits()
         async with self.pool.acquire() as conn:
             records = await conn.fetch(query, limit, offset)
@@ -504,6 +525,17 @@ class DBManager:
             print(records)
             return [dict(record) for record in records]
 
+    # para solucionar el problema 1 + n cuando necesitas datos de varios a la vez
+    async def get_items_by_ids_with_transaction(self, items_id: list[str], conn: asyncpg.Connection):
+
+        query = self.schema_entity.queries.select_products_by_its_id_with_stock_query()
+
+        records = await conn.fetch(query, items_id)
+        
+        # ¡Corregido! Ahora se asegura que los datos sean diccionarios.
+        return [dict(record) for record in records]
+    
+
     """
     @method: Creates a new record in the database.
     @params:
@@ -561,7 +593,21 @@ class DBManager:
             record = await conn.fetchrow(delete_query, key_value)
             return dict(record) if record else None
 
+    # para las transacciones     
+    async def delete_by_custom_field_with_transaction(self, field_name:str, key_value:str, conn: asyncpg.Connection) -> bool:
 
+        query = self.schema_entity.queries.delete_query_customized_field_query(field_name)
+
+        record = await conn.execute(query, key_value)
+
+        # If rows_deleted is greater than 0, it means a record was removed.
+        if record:
+            return True
+        else:
+            # If no rows were deleted (rows_deleted is 0) or the command failed for some reason.
+            return False
+        
+        
 """
 @class: A generic base class for repositories, adaptable to any Pydantic model.
 @params:
@@ -667,7 +713,7 @@ class GemRepository:
     # TODO: doc strimgs Por el momento es para crear una transaccion.
     async def create_with_transaction(self, data: T, conn: asyncpg.Connection = None) -> T | None:
         # Convert the Pydantic model to a dictionary using .model_dump()
-        db_data = await self.manager.create_with_transaction(data.model_dump(), conn)
+        db_data = await self.manager.create_with_transaction(data, conn)
 
         if db_data:
             return self.model(**db_data)

@@ -5,11 +5,11 @@ from config.connect import DbPool
 from entities.migrations import _shopping_carts_gem, _cart_items_gem
 
 # aqui tengo que utilzizar el schema de la tabla shopping cart item.  
+
 """
 
 lo hago asi porque shopping-cart-item depende directamente de shopping cart y es 
 una tabla simplemente de union para unir productos con carritos. 
-
 
 """   
 class ShoppingCartItem(GemRepository):
@@ -19,8 +19,14 @@ class ShoppingCartItem(GemRepository):
         super().__init__(model=ShoppingCartItem, gem=self.gem, pool=pool)
 
     async def get_all_items_on_cart(self, cart_id:str) -> list[ShoppingCartItem]:
-        key_name = 'cart_id'
-        return await self.manager.get_all_by_key(key_name, cart_id)
+        field_name = 'cart_id'
+        return await self.manager.get_all_by_key(field_name, cart_id)
+    
+    async def remove_product_from_cart(self, product_id:str, conn) -> bool:
+
+        field_name = 'product_id'
+
+        return await self.manager.delete_by_custom_field_with_transaction(field_name, product_id, conn)
 
 
 
@@ -51,5 +57,8 @@ class ShoppingCartRepository(GemRepository):
         return None # Return None if no cart is found.
 
 
+    async def remove_product_from_shopping_cart_items(self, product_id:str, conn) -> bool: 
+
+        return await self.cart_item_repo.remove_product_from_cart(product_id, conn)
 
 

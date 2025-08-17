@@ -1,5 +1,5 @@
 from fastapi import Depends
-from config.connect import DbPool, DB_CONFIG, TOKEN_CONFIG
+from config.connect import DbPool, DB_CONFIG
 from pygem.main import create_db_pool
 from .repository import ShoppingCartRepository
 from .service import ShoppingCartService

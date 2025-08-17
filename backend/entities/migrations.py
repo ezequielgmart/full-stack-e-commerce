@@ -15,29 +15,6 @@ _users_gem = SingleGenericSchema(
 )
 
 
-_orders_gem = SingleGenericSchema(
-    table='orders',
-    primary_key='order_id',
-    fields=[
-        Field(is_primary_key=True, name='order_id', type='uuid', is_null=False),
-        Field(is_primary_key=True, name='user_id', type='uuid', is_null=False),
-        Field(is_primary_key=True, name='status_id', type='uuid', is_null=False),
-        Field(is_primary_key=False, name='total_cost', type='numeric', is_null=False),
-        Field(is_primary_key=False, name='created_at', type='timestamp with time zone', is_null=True)
-    ]
-)
-
-
-_order_statuses_gem = SingleGenericSchema(
-    table='order_statuses',
-    primary_key='status_id',
-    fields=[
-        Field(is_primary_key=True, name='status_id', type='uuid', is_null=False),
-        Field(is_primary_key=False, name='status_name', type='varchar', is_null=False)
-    ]
-)
-
-
 _products_gem = SingleGenericSchema(
     table='products',
     primary_key='product_id',
@@ -60,27 +37,15 @@ _products_inventory_gem = SingleGenericSchema(
 )
 
 
-_order_items_gem = SingleGenericSchema(
-    table='order_items',
-    primary_key='order_id',
-    fields=[
-        Field(is_primary_key=True, name='order_id', type='uuid', is_null=False),
-        Field(is_primary_key=True, name='product_id', type='uuid', is_null=False),
-        Field(is_primary_key=False, name='quantity', type='integer', is_null=False),
-        Field(is_primary_key=False, name='price_at_purchase', type='numeric', is_null=False)
-    ]
-)
-
-
 _payments_gem = SingleGenericSchema(
     table='payments',
     primary_key='payment_id',
     fields=[
         Field(is_primary_key=True, name='payment_id', type='uuid', is_null=False),
-        Field(is_primary_key=True, name='order_id', type='uuid', is_null=False),
+        Field(is_primary_key=False, name='order_id', type='uuid', is_null=False),
         Field(is_primary_key=False, name='amount', type='numeric', is_null=False),
         Field(is_primary_key=False, name='payment_method_id', type='uuid', is_null=False),
-        Field(is_primary_key=True, name='status_id', type='uuid', is_null=False),
+        Field(is_primary_key=False, name='status_id', type='uuid', is_null=False),
         Field(is_primary_key=False, name='created_at', type='timestamp with time zone', is_null=True)
     ]
 )
@@ -142,7 +107,7 @@ _cart_items_gem = SingleGenericSchema(
     primary_key='cart_id',
     fields=[
         Field(is_primary_key=True, name='cart_id', type='uuid', is_null=False),
-        Field(is_primary_key=True, name='product_id', type='uuid', is_null=False),
+        Field(is_primary_key=False, name='product_id', type='uuid', is_null=False),
         Field(is_primary_key=False, name='quantity', type='integer', is_null=False)
     ]
 )
@@ -163,7 +128,7 @@ _inventory_movements_gem = SingleGenericSchema(
     primary_key='movement_id',
     fields=[
         Field(is_primary_key=True, name='movement_id', type='uuid', is_null=False),
-        Field(is_primary_key=True, name='product_id', type='uuid', is_null=False),
+        Field(is_primary_key=False, name='product_id', type='uuid', is_null=False),
         Field(is_primary_key=False, name='movement_type_id', type='uuid', is_null=False),
         Field(is_primary_key=False, name='quantity_change', type='integer', is_null=False),
         Field(is_primary_key=False, name='reference_id', type='varchar', is_null=True),
@@ -188,7 +153,6 @@ _shipping_addresses_gem = SingleGenericSchema(
     table='shipping_addresses',
     primary_key='address_id',
     fields=[
-        # cambie manualmente el de user id
         Field(is_primary_key=True, name='address_id', type='uuid', is_null=False),
         Field(is_primary_key=False, name='user_id', type='uuid', is_null=False),
         Field(is_primary_key=False, name='recipient_name', type='varchar', is_null=False),
@@ -199,6 +163,41 @@ _shipping_addresses_gem = SingleGenericSchema(
         Field(is_primary_key=False, name='country', type='varchar', is_null=False),
         Field(is_primary_key=False, name='phone_number', type='varchar', is_null=True),
         Field(is_primary_key=False, name='is_default', type='boolean', is_null=False)
+    ]
+)
+
+
+_orders_status_gem = SingleGenericSchema(
+    table='orders_status',
+    primary_key='status_id',
+    fields=[
+        Field(is_primary_key=True, name='status_id', type='integer', is_null=False),
+        Field(is_primary_key=False, name='status_name', type='varchar', is_null=False)
+    ]
+)
+
+
+_orders_gem = SingleGenericSchema(
+    table='orders',
+    primary_key='order_id',
+    fields=[
+        Field(is_primary_key=True, name='order_id', type='uuid', is_null=False),
+        Field(is_primary_key=False, name='user_id', type='uuid', is_null=False),
+        Field(is_primary_key=False, name='status_id', type='integer', is_null=False),
+        Field(is_primary_key=False, name='cost_total', type='numeric', is_null=False),
+        Field(is_primary_key=False, name='sales_tax', type='numeric', is_null=False),
+        Field(is_primary_key=False, name='created_at', type='timestamp with time zone', is_null=False)
+    ]
+)
+
+
+_order_items_gem = SingleGenericSchema(
+    table='order_items',
+    primary_key='order_id',
+    fields=[
+        Field(is_primary_key=True, name='order_id', type='uuid', is_null=False),
+        Field(is_primary_key=False, name='product_id', type='uuid', is_null=False),
+        Field(is_primary_key=False, name='quantity', type='integer', is_null=False)
     ]
 )
 
