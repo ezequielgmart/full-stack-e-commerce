@@ -45,7 +45,7 @@ _payments_gem = SingleGenericSchema(
         Field(is_primary_key=False, name='order_id', type='uuid', is_null=False),
         Field(is_primary_key=False, name='amount', type='numeric', is_null=False),
         Field(is_primary_key=False, name='payment_method_id', type='uuid', is_null=False),
-        Field(is_primary_key=False, name='status_id', type='uuid', is_null=False),
+        Field(is_primary_key=True, name='status_id', type='uuid', is_null=False),
         Field(is_primary_key=False, name='created_at', type='timestamp with time zone', is_null=True)
     ]
 )
@@ -107,7 +107,7 @@ _cart_items_gem = SingleGenericSchema(
     primary_key='cart_id',
     fields=[
         Field(is_primary_key=True, name='cart_id', type='uuid', is_null=False),
-        Field(is_primary_key=False, name='product_id', type='uuid', is_null=False),
+        Field(is_primary_key=True, name='product_id', type='uuid', is_null=False),
         Field(is_primary_key=False, name='quantity', type='integer', is_null=False)
     ]
 )
@@ -128,7 +128,7 @@ _inventory_movements_gem = SingleGenericSchema(
     primary_key='movement_id',
     fields=[
         Field(is_primary_key=True, name='movement_id', type='uuid', is_null=False),
-        Field(is_primary_key=False, name='product_id', type='uuid', is_null=False),
+        Field(is_primary_key=True, name='product_id', type='uuid', is_null=False),
         Field(is_primary_key=False, name='movement_type_id', type='uuid', is_null=False),
         Field(is_primary_key=False, name='quantity_change', type='integer', is_null=False),
         Field(is_primary_key=False, name='reference_id', type='varchar', is_null=True),
@@ -154,7 +154,7 @@ _shipping_addresses_gem = SingleGenericSchema(
     primary_key='address_id',
     fields=[
         Field(is_primary_key=True, name='address_id', type='uuid', is_null=False),
-        Field(is_primary_key=False, name='user_id', type='uuid', is_null=False),
+        Field(is_primary_key=True, name='user_id', type='uuid', is_null=False),
         Field(is_primary_key=False, name='recipient_name', type='varchar', is_null=False),
         Field(is_primary_key=False, name='street_address', type='varchar', is_null=False),
         Field(is_primary_key=False, name='city', type='varchar', is_null=False),
@@ -181,9 +181,9 @@ _orders_gem = SingleGenericSchema(
     table='orders',
     primary_key='order_id',
     fields=[
-        Field(is_primary_key=True, name='order_id', type='uuid', is_null=False),
-        Field(is_primary_key=False, name='user_id', type='uuid', is_null=False),
-        Field(is_primary_key=False, name='status_id', type='integer', is_null=False),
+        Field(is_primary_key=False, name='order_id', type='uuid', is_null=False),
+        Field(is_primary_key=True, name='user_id', type='uuid', is_null=False),
+        Field(is_primary_key=True, name='status_id', type='integer', is_null=False),
         Field(is_primary_key=False, name='cost_total', type='numeric', is_null=False),
         Field(is_primary_key=False, name='sales_tax', type='numeric', is_null=False),
         Field(is_primary_key=False, name='created_at', type='timestamp with time zone', is_null=False)
@@ -195,9 +195,29 @@ _order_items_gem = SingleGenericSchema(
     table='order_items',
     primary_key='order_id',
     fields=[
-        Field(is_primary_key=True, name='order_id', type='uuid', is_null=False),
-        Field(is_primary_key=False, name='product_id', type='uuid', is_null=False),
+        Field(is_primary_key=False, name='order_id', type='uuid', is_null=False),
+        Field(is_primary_key=True, name='product_id', type='uuid', is_null=False),
         Field(is_primary_key=False, name='quantity', type='integer', is_null=False)
+    ]
+)
+
+
+_product_images_gem = SingleGenericSchema(
+    table='product_images',
+    primary_key='product_id',
+    fields=[
+        Field(is_primary_key=True, name='product_id', type='uuid', is_null=False),
+        Field(is_primary_key=True, name='image_id', type='integer', is_null=False)
+    ]
+)
+
+
+_images_gem = SingleGenericSchema(
+    table='images',
+    primary_key='image_id',
+    fields=[
+        Field(is_primary_key=True, name='image_id', type='integer', is_null=False),
+        Field(is_primary_key=False, name='image_url', type='varchar', is_null=False)
     ]
 )
 
