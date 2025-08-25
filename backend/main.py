@@ -1,12 +1,14 @@
 from fastapi import FastAPI
 # from routes.v1.products import router as product_router
-# from routes.v1.auth import router as auth_router
+
 # from routes.v1.profiles import router as profile_router
 # from routes.v1.shipping_addresses import router as shipping_addresses_router
 # from routes.v1.shopping_cart import router as shopping_carts
 # from routes.v1.orders import router as orders_routes
-from routes.v1.users import router as users_router
 
+# Auth
+from routes.v1.users import router as users_router
+from routes.v1.auth import router as auth_router
 from config.connect import create_db_pool
 
 from contextlib import asynccontextmanager
@@ -39,11 +41,11 @@ app = FastAPI(
 #     tags=["Product"]
 # )
 
-# app.include_router(
-#     auth_router,
-#     prefix="/auth",
-#     tags=["Auth"]
-# )
+app.include_router(
+    auth_router,
+    prefix="/auth",
+    tags=["Auth"]
+)
 
 app.include_router(
     users_router,

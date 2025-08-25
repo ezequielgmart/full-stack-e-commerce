@@ -4,23 +4,23 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from datetime import datetime, timezone
-
-from config.connect import DbPool, DB_CONFIG, TOKEN_CONFIG
-from pygem.main import create_db_pool
+from pygem.main import GEM
+from config.connect import DB_CONFIG, TOKEN_CONFIG
 from .repository import AuthRepository
 from .service import AuthService
 from .controller import AuthController
 from entities.auth import TokenData # You'll need this Pydantic model for the payload
 
-async def get_db_pool():
-    pool = await create_db_pool(DB_CONFIG)
+async def get_session():
+    gem_session = await GEM.start(DB_CONFIG)
     try: 
-        yield pool
+        yield gem_session
     finally:
-        pool.close()
+        gem_session.pool.close()
 
-async def get_auth_repository(pool:DbPool = Depends(get_db_pool)):
-    return AuthRepository(pool=pool)
+
+async def get_auth_repository(gem_session = Depends(get_session)):
+    return AuthRepository(gem_session=gem_session)
 
 async def get_auth_service(
         repository: AuthRepository = Depends(get_auth_repository)

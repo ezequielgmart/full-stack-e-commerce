@@ -6,10 +6,29 @@ from entities.models import User
 
 
 class AuthRepository():
-    def __init__(self, gem_sesison):
-        self.gem_session = gem_sesison
+    def __init__(self, gem_session):
+        self.gem_session = gem_session
 
+    # method
     async def get_by_username(self, username:str): 
+
+        qrystr = Query(
+            User,
+            User.user_id,
+            User.username,
+            User.password,
+            User.is_admin
+        ).where(User.username).generate()    
+
+        result = await self.gem_session.get_one_or_none(
+            model_cls = User,
+            query=qrystr,
+            param=username
+        ) 
+
+        return result 
+    
+    async def get_by_id(self, username:str): 
 
         qrystr = Query(
             User,

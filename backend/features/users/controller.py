@@ -1,12 +1,10 @@
 
 from entities.users import User, NewUserResponse, RegisterRequest
-from config.connect import TOKEN_CONFIG
 from .service import UserService
 import uuid
 
 # hash the pass
 from passlib.context import CryptContext
-
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
