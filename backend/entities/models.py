@@ -1,6 +1,15 @@
-from pygem.main import Column, Schema
+from pygem.schema import *
 import uuid 
 import datetime
+
+# esta tabla tiene una relacion uno a uno con product debido a que cada product solo puede tener un stock y viceversa 
+
+class ProductInventory(Schema):
+    _tablename_ = "products_inventory"
+
+     # product_id es a la vez PK de esta tabla y FK que se conecta a la tabla products
+    product_id = ForeignKey(reference="products.product_id", primary_key=True)
+    stock = Column(type=int)
 
 # Ejemplo de un modelo final
 class Product(Schema):
@@ -9,6 +18,10 @@ class Product(Schema):
     name = Column(type=str)
     description = Column(type=str)
     unit_price = Column(type=float)
+
+    # La relación para acceder al inventario desde el producto
+    inventory = Relationship(foreign_key_column=ProductInventory.product_id, model=ProductInventory)
+
 
 class User(Schema):
     _tablename_ = "users"
@@ -30,7 +43,18 @@ class ShoppingCart(Schema):
     cart_id=Column(type=uuid.UUID, primary_key = True)
     user_id=Column(type=uuid.UUID)
     created_at=Column(type=datetime.datetime)
-        
+
+    
+class Image(Schema):
+    _tablename_ = "images"
+    image_id=Column(type=int, primary_key = True)
+    image_url=Column(type=str)
+
+            
+class ProductImage(Schema):
+    _tablename_ = "product_images"
+    product_id=Column(type=uuid.UUID, primary_key = True)
+    image_id=Column(type=int)
 """
 
 # Crea un nuevo objeto Producto

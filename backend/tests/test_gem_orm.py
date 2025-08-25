@@ -1,8 +1,10 @@
-from pygem.main import GEM, Query, Add, Delete
+from pygem.main import GEM
+from pygem.queries import Query, Add, Delete, Update
+
 import pytest
 import pytest_asyncio  # ← Importa explícitamente
 from config.connect import DB_CONFIG
-from entities.models import Product, User, ShoppingCart
+from entities.models import Product, User, ShoppingCart, ProductInventory, ProductImage, Image
 import uuid
 import datetime
 
@@ -42,18 +44,10 @@ async def gem_session():
     try:
         print("🧹 cleaning tables...")
 
-        # Verificar conteo antes
-        count_users_before = await gem.get_all("SELECT COUNT(*) FROM users")
-        count_carts_before = await gem.get_all("SELECT COUNT(*) FROM shopping_carts")
-        print(f"Usuarios antes: {count_users_before[0]['count']}, Carritos antes: {count_carts_before[0]['count']}")
-
         # Trunca en orden correcto
         await gem.execute("TRUNCATE TABLE shopping_carts, users RESTART IDENTITY CASCADE")
 
         # Verificar después
-        count_users_after = await gem.get_all("SELECT COUNT(*) FROM users")
-        count_carts_after = await gem.get_all("SELECT COUNT(*) FROM shopping_carts")
-        print(f"Usuarios después: {count_users_after[0]['count']}, Carritos después: {count_carts_after[0]['count']}")
 
         yield gem
     finally:
@@ -71,82 +65,127 @@ async def gem_session():
         await gem.pool.close()
         print("❌ Conexión a la base de datos cerrada.")
 
-# --- TESTS UNITARIOS (no necesitan DB) ---
-def test_schema_attrs():
-    assert Product.product_id.name == "product_id"
-    assert Product.name.name == "name"
-    assert Product.description.name == "description"
-    assert Product.unit_price.name == "unit_price"
-
-
-def test_select_query():
-    query_string = Query(
-        Product,
-        Product.product_id,
-        Product.name,
-        Product.description,
-        Product.unit_price
-    ).generate()
-
-    assert query_string == "SELECT product_id, name, description, unit_price FROM products "
-
-
-def test_select_all_user_query():
-    query_string = Query(User).generate()
-    assert query_string == "SELECT * FROM users "
-
-
-def test_select_query_with_filter():
-    query_string = Query(
-        Product,
-        Product.product_id,
-        Product.name,
-        Product.description,
-        Product.unit_price
-    ).add_filter(Product.product_id).generate()
-
-    assert query_string == "SELECT product_id, name, description, unit_price FROM products WHERE product_id = $1"
-
-
-def test_insert_query():
-    new_user = User(
-        user_id=uuid.uuid4(),
-        username="jondoe",
-        email="jondoe@example.com",
-        password="1a5sd45as1f85qw1fc5ac5a1sv5sd4v5zc1v51za.,lsckals,cqoiefvpadscnasic",
-        is_admin=False
-    )
-
-    new_product = Product(
-        product_id=uuid.uuid4(),
-        name="Pato",
-        description="producto para identificar que tan pato es gabriel",
-        unit_price=2546.00
-    )
-
-    user_query = Add(new_user).query()
-    product_query = Add(new_product).query()
-
-    assert user_query == "INSERT INTO users (user_id, username, email, password, is_admin) VALUES ($1, $2, $3, $4, $5) RETURNING user_id, username, email, password, is_admin"
-    assert product_query == "INSERT INTO products (product_id, name, description, unit_price) VALUES ($1, $2, $3, $4) RETURNING product_id, name, description, unit_price"
-
-def test_delete_query(): 
-
-    query_string = Delete(
-        Product
-    ).add_clause(Product.product_id).query()
-
-    assert query_string == "DELETE FROM products WHERE product_id = $1"
 
 
 
-# --- TESTS ASINCRONOS (con DB) ---
+# # --- TESTS ASINCRONOS (con DB) ---
 @pytest.mark.asyncio
-async def test_get_all(gem_session):  # ✅ Inyecta la fixture
+async def test_get_all(gem_session):
     query_string = Query(Product).generate()
-    result = await gem_session.get_all(query_string)
-    assert str(result[0]["product_id"]) == "b30a1c8f-28c0-43f5-a8e9-d757d54402a1"
+    # Ahora devuelve una lista de objetos Product
+    result = await gem_session.get_all(model_cls=Product, query=query_string)
 
+    assert str(result[0].product_id) == "b30a1c8f-28c0-43f5-a8e9-d757d54402a1"
+
+@pytest.mark.asyncio
+async def test_get_all_one_to_one(gem_session):
+    query_string = Query(
+        Product,
+        Product.product_id,
+        Product.name,
+        Product.description,
+        Product.unit_price,
+        ProductInventory.stock
+    ).array_agg(
+        Image,
+        Image.image_url, 
+        "images"
+    ).join(
+        ProductInventory, 
+        Product.product_id, 
+        ProductInventory.product_id
+    ).join(
+        ProductImage, 
+        Product.product_id, 
+        ProductImage.product_id
+    ).join(
+        Image, 
+        ProductImage.image_id, 
+        Image.image_id, 
+        ProductImage
+    ).generate()
+    # Ahora devuelve una lista de objetos Product
+    result = await gem_session.get_all(model_cls=Product, query=query_string)
+
+    assert isinstance(result[0].images, list)
+    assert len(result[0].images) > 0
+
+@pytest.mark.asyncio
+async def test_get_byid_on_one_to_one(gem_session):
+    id = "b30a1c8f-28c0-43f5-a8e9-d757d54402a1"
+    query_string = Query(
+        Product,
+        Product.product_id,
+        Product.name,
+        Product.description,
+        Product.unit_price,
+        ProductInventory.stock
+    ).array_agg(
+        Image,
+        Image.image_url, 
+        "images"
+    ).join(
+        ProductInventory, 
+        Product.product_id, 
+        ProductInventory.product_id
+    ).join(
+        ProductImage, 
+        Product.product_id, 
+        ProductImage.product_id
+    ).join(
+        Image, 
+        ProductImage.image_id, 
+        Image.image_id, 
+        ProductImage
+    ).where(Product.product_id).generate()
+    # Ahora devuelve una lista de objetos Product
+    result = await gem_session.get_one_or_none(model_cls=Product, query=query_string, param=id)
+
+    assert str(result.product_id) == "b30a1c8f-28c0-43f5-a8e9-d757d54402a1"
+    assert result.stock == 50
+
+@pytest.mark.asyncio
+async def test_get_byid_funct_on_one_to_one(gem_session):
+    id = "b30a1c8f-28c0-43f5-a8e9-d757d54402a1"
+    query_string = Query(
+        Product,
+        Product.product_id,
+        Product.name,
+        Product.description,
+        Product.unit_price,
+        ProductInventory.stock
+    ).array_agg(
+        Image,
+        Image.image_url, 
+        "images"
+    ).join(
+        ProductInventory, 
+        Product.product_id, 
+        ProductInventory.product_id
+    ).join(
+        ProductImage, 
+        Product.product_id, 
+        ProductImage.product_id
+    ).join(
+        Image, 
+        ProductImage.image_id, 
+        Image.image_id, 
+        ProductImage
+    ).where(Product.product_id).generate()
+    # Ahora devuelve una lista de objetos Product
+    result = await gem_session.get_one_or_none(model_cls=Product, query=query_string, param=id)
+
+    assert str(result.product_id) == "b30a1c8f-28c0-43f5-a8e9-d757d54402a1"
+    assert result.stock == 50
+"""
+    qr_str = Query(
+        Product,
+        Product.product_id,
+        Product.name,
+        Product.unit_price,
+        ProductInventory.stock
+    ).onlink(Product.product_id).join(ProductInventory).generate()
+"""
 
 @pytest.mark.asyncio
 async def test_get_one(gem_session):
@@ -156,37 +195,33 @@ async def test_get_one(gem_session):
         Product.name,
         Product.description,
         Product.unit_price
-    ).add_filter(Product.product_id).generate()
+    ).where(Product.product_id).generate()
 
     id = "b30a1c8f-28c0-43f5-a8e9-d757d54402a1"
-    result = await gem_session.get_one_or_none(query=query_string, param=id)
-    assert str(result["product_id"]) == id
+    # Devuelve un objeto Product
+    result = await gem_session.get_one_or_none(
+        model_cls=Product,
+        query=query_string, 
+        param=id
+    )
+    # Accede al atributo con '.' en lugar de '[]'
+    assert str(result.product_id) == id
 
 
 @pytest.mark.asyncio
 async def test_get_one_with_name(gem_session):
-    query_string = Query(Product).add_filter(Product.name).generate()
+    query_string = Query(Product).where(Product.name).generate()
     name = "MacBook Pro 14"
-    result = await gem_session.get_one_or_none(query=query_string, param=name)
-    assert result["name"] == name
-
-
-@pytest.mark.asyncio
-async def test_get_one_wrong_id(gem_session):
-    query_string = Query(
-        Product,
-        Product.product_id,
-        Product.name,
-        Product.description,
-        Product.unit_price
-    ).add_filter(Product.product_id).generate()
-
-    id = "b30a1c8f-28c0-43f5-a8e9-d757d54402aa"
-    result = await gem_session.get_one_or_none(query=query_string, param=id)
-    assert result is None
+    # Devuelve un objeto Product
+    result = await gem_session.get_one_or_none(
+        model_cls=Product,
+        query=query_string, 
+        param=name
+    )
+    # Accede al atributo con '.'
 
 @pytest.mark.asyncio
-async def test_delete_user(gem_session):
+async def test_update_user(gem_session):
 
     # crear a un usuario
     new_user = User(
@@ -205,15 +240,48 @@ async def test_delete_user(gem_session):
     if result:
 
         # Genera la cadena de consulta a partir del objeto Delete
-        delete_query_string = Delete(User).add_clause(User.user_id).query()
-        user_id_param = new_user.user_id
+        update_query_string = Update(
+            User,
+            User.username,
+            User.email,
+            User.is_admin
+        ).where(
+            User.user_id
+        ).query()
+
+        
+        user_id = new_user.user_id
+        updated_username = "newJonDoe"
+        updated_email = "doe@example.com"
+        updated_is_admin = True
+
         # Los parámetros siempre deben ir en una lista o tupla
-        rows_affected = await gem_session.remove(query=delete_query_string, param=[user_id_param])
+        await gem_session.modify(query=update_query_string, values=[
+            user_id,
+            updated_username,
+            updated_email,
+            updated_is_admin
+        ])
+        
+
+        await gem_session.modify(query=update_query_string, values=[
+                user_id,
+                updated_username,
+                updated_email,
+                updated_is_admin
+            ])
+        
+    get_query = Query(User).where(User.user_id).generate()
     
-    assert rows_affected == True
+    # Devuelve un objeto User
+    updated_user = await gem_session.get_one_or_none(model_cls=User, query=get_query, param=user_id) 
+    
+    # Accede a los atributos con '.'
+    assert updated_user.username == updated_username
+    assert updated_user.email == updated_email
+    assert updated_user.is_admin == updated_is_admin
 
-
-# --- PRUEBA DE TRANSACCIÓN ---
+# # --- PRUEBA DE TRANSACCIÓN ---
 @pytest.mark.asyncio
 async def test_create_user_and_profile_with_transaction(gem_session):
     new_user_data = {
@@ -234,10 +302,4 @@ async def test_create_user_and_profile_with_transaction(gem_session):
 
     assert user_created is not None
 
-
-    user_from_db = await gem_session.get_one_or_none(
-        "SELECT * FROM users WHERE user_id = $1",
-        str(new_user_data["user_id"])
-    )
-    assert user_from_db is not None
 

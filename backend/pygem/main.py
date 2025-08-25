@@ -1,5 +1,7 @@
 import asyncpg
 from typing import Any
+from pygem.queries import Query, Delete, Update, Add
+from pygem.schema import *
 """ Darle un enfoque de ORM a pygem """
 
 
@@ -9,6 +11,7 @@ class GEM():
     def __init__(self, pool):
         self.pool = pool
 
+    # Es la unica forma de tener un pool ya que esto es asincrono y los __init__ no pueden serlo. 
     @classmethod
     async def start(cls, config:dict[str, any]):
         """
@@ -20,7 +23,12 @@ class GEM():
         except Exception as e:
             print(f"error connecting to DB: {e}")
             return None
-    
+        
+    """ 
+    ********************************************
+    METODOS EXTERNOS, PARA UTILIZAR EN LOS REPO
+    ********************************************
+    """   
     def get_session(self):
         return self.pool
     
@@ -30,36 +38,56 @@ class GEM():
             the callback is a async function which contains business logic 
 
         """
-
         async with self.pool.acquire() as conn: 
             async with conn.transaction():
                 # passing thru param the conexion to the business logic function
                 result = await callback(conn)
                 return result 
             
-    async def get_all(self, query:str, conn=None) -> list[dict]:
-
-        result = await self._select(
+         
+    async def get_all(self, model_cls: object, query:str, conn=None) -> list[object]:
+        
+        records = await self._select(
             query=query,
             params=None,
             conn=conn
         )
+        
+        # Convierte cada registro de diccionario a una instancia del modelo
+        model_instances = []
+        for record in records:
+            instance = model_cls(**record)
+            instance._session = self  # Asigna la sesión a la instancia
+            model_instances.append(instance)
 
-        return result
+        return model_instances
         
         
-    async def get_one_or_none(self, query:str, param:str, conn=None) -> dict | None:
+    async def get_one_or_none(
+            self, 
+            model_cls: object, 
+            query:str, 
+            param:str, 
+            conn=None
+        ) -> object | None:
 
         record = await self._select(
             query=query,
             params=param,
             conn=conn
         )
-
-        if record: 
-            return dict(record[0])
+        
+        if record:
+            # 1. Crea una instancia del modelo con los datos del registro.
+            model_instance = model_cls(**dict(record[0]))
             
-        return None    
+            # 2. Asigna la sesión (self) a la nueva instancia
+            model_instance._session = self
+            
+            # 3. Retorna la instancia, lista para navegar por las relaciones
+            return model_instance
+            
+        return None 
 
     async def create(self, model_object: object, conn=None)-> dict | None:
         
@@ -74,6 +102,36 @@ class GEM():
             conn=conn
         )
     
+    # OJO
+    # Los valores en values deben de ir enviados en el mismo orden en el cual se esta trabajando. 
+    # Ejemplo si en mi query tengo 
+    # model.email
+    # model.password
+    # model.gender
+
+    # debo de enviar los valores en ese mismo orden
+    # example.com (nuevo)
+    # askdaskdkalsfjakslf (nuevo)
+    # female (nuevo)
+
+    async def modify(self, query:str, values:list, conn=None): # aun no se que retorna: 
+        # IDEAL: debe de retornar si fue efectivo o no, o el modelo completo pero para eso deberia
+        # de traer todo el modelo y no me interesa hacer eso por el id. ya veremos. 
+
+        """update_values = """
+        if conn is None:
+            async with self.pool.acquire() as conn:
+                # Pasa la lista de parámetros
+                rows_modified = await self._execute_db(query=query, params=values, conn=conn)
+        else:
+            rows_modified = await self._execute_db(query=query, params=values, conn=conn)
+        
+        if rows_modified > 0:
+            return True
+        else: 
+            return False    
+
+
     # 'param' debería ser una lista o tupla
     async def remove(self, query: str, param: list, conn=None) -> bool:
         rows_affected = await self._delete(
@@ -97,6 +155,7 @@ class GEM():
 
         return rows_affected
 
+    """ METODOS INTERNOS """
     async def _delete(self, query: str, params: list, conn=None):
         if conn is None:
             async with self.pool.acquire() as conn:
@@ -109,26 +168,24 @@ class GEM():
 
 
 
-    async def _select(self, query:str, params:str = None, conn=None)-> dict | None:
+    async def _select(self, query:str, params:str = None, conn=None)-> list[dict]:
         
         # Si no se pasa una conexión, adquiere una del pool.
         if conn is None: 
             async with self.pool.acquire() as conn:
-                    
                 records = await self._fetch_db(
                     query=query,
                     params=params,
                     conn=conn
                 )
         else: 
-            
             records = await self._fetch_db(
-                    query=query,
-                    params=params,
-                    conn=conn
-                )
-    
-
+                query=query,
+                params=params,
+                conn=conn
+            )
+        
+        # Asegúrate de retornar una lista de diccionarios, no solo un diccionario
         return [dict(record) for record in records]
     
     # ambos metodos create y create_with_transaction van a usar esto ya que esta parte es lo mismo.  
@@ -175,8 +232,9 @@ class GEM():
 
         return record
     
-
+    # Ideal para ejecutar una query sin esperar nada mas que las rows affected
     # Usa *params para desempaquetar la lista de parámetros
+
     async def _execute_db(self, query:str, params:list, conn):
 
         status_string = await conn.execute(query, *params)
@@ -195,166 +253,5 @@ class GEM():
         else:
             return await conn.execute(query, *args)
         
-class Update(): 
-    def __init__(self, obj):
-        
-        self.obj = obj    
-        self.clauses = []
 
-    def query(self): 
-
-        table_name = self.obj._tablename_
-
-        clauses_str = " ".join(self.clauses)
-
-        return f"UPDATE {table_name} SET"   
-
-    # dependiendo de todos los parametros que envie para actualizar se hara una serie de parametros para una query segura 
-
-    def params_for_query(self, fields_for_update): 
-
-        return [f"{i + 1}" for i in range(len(fields_for_update))]     
-class Delete():
     
-    def __init__(self, obj):
-        
-        self.obj = obj
-        self.clauses = []
-
-    def query(self): 
-
-        # Obtiene el nombre de la tabla desde la clase del objeto
-        table_name = self.obj._tablename_  
-
-        # Une las cláusulas WHERE, etc.
-        clauses_str = " ".join(self.clauses)
-
-        return f"DELETE FROM {table_name} {clauses_str}"
-         
-    def add_clause(self, filter:str): 
-        
-        filter_str = filter.name
-
-        self.clauses.append(f"WHERE {filter_str} = $1")
-
-        return self    
-     
-class Add():
-    def __init__(self, obj):
-        self.obj = obj
-        self.fields_on_schema = {}
-
-    def query(self) -> str:
-
-        # Obtiene el nombre de la tabla desde la clase del objeto
-        table_name = self.obj._tablename_  
-
-        # Filtra los attrs para obtener solo los campos del modelo
-        # Evita los atributos internos del objeto
-        self.fields_on_schema = {k: v for k, v in vars(self.obj).items() if not k.startswith('_')}
-
-        # Extraer los nombres de los campos
-        fields = [field for field in self.fields_on_schema.keys()]
-
-        # generar un parametro $1 $2 $3 para consultas sql preparadas    
-        param_values = [f"${i + 1}" for i in range(len(fields))]
-
-        # unir los nombres de los campos y los paramentros por comas
-        fields_str = ", ".join(fields)
-        params_str = ", ".join(param_values)
-
-        return f"INSERT INTO {table_name} ({fields_str}) VALUES ({params_str}) RETURNING {fields_str}"
-
-    def get_values(self) -> list[str, Any]: 
-        # extraer los valores
-        return [value for value in self.fields_on_schema.values()]
-
-# El método para construir las consultas SELECT. Solo es responsable de generar las consultas. 
-class Query(): 
-    # El método para construir las consultas SELECT
-    def __init__(self, model, *fields): # Recibe los campos ya desempaquetados
-
-        self.model = model
-        self.clauses = []
-
-        # Si la tupla de campos está vacía, se seleccionarán todos los campos (*)
-        if not fields:
-            self.fields_to_select = "*"
-        else:
-            # De lo contrario, se usarán los campos específicos
-            self.fields_to_select = fields
-
-    def generate(self) -> str: 
-        select_clause = ""
-
-        if self.fields_to_select == "*":
-            select_clause = "*"
-        else:
-            # Si se especificaron campos, extrae sus nombres
-            select_fields_str = [field.name for field in self.fields_to_select]
-            select_clause = ", ".join(select_fields_str)
-        
-        # Une las cláusulas WHERE, etc.
-        clauses_str = " ".join(self.clauses)
-
-        return f"SELECT {select_clause} FROM {self.model._tablename_} {clauses_str}" 
-    
-    def add_filter(self, filter:str): 
-        
-        filter_str =  filter.name
-
-        self.clauses.append(f"WHERE {filter_str} = $1")
-
-        return self
-    
-# Clase de una columna simple
-class Column():
-    def __init__(self, type, primary_key = False):
-            
-        self.type = type
-        self.name = None # El nombre es inicialmente None
-        self.primary_key = primary_key # El nombre es inicialmente None
-
-
-# La meta clase que hara la magia y extraera la info
-class MetaSchemaDeclarative(type): 
-    """
-    __new__ :
-    es una función especial que es responsable de crear y devolver la nueva instancia de un objeto.
-    """
-    def __new__(cls, name, bases, attrs):
-        # itera sobre los atributos que se van a añadir a la clase
-        for attr_name, attr_value in attrs.items():
-            # Si el atributo es una instancia de Column 
-            # se le asignara el nombre del atributo al nombre del objeto columna 
-
-            if isinstance(attr_value, Column):
-                attr_value.name = attr_name 
-
-        # llamar al constructor de classes normal para crear la clase
-        return super().__new__(cls, name, bases, attrs) 
-
-# La clase base que utilzia la metaclase   
-#  NOTA PARA RECORDAR
-"""
-El **kwargs en la definición de una función significa que el método puede aceptar un número variable de argumentos de palabra clave (keyword arguments).
-
-Aquí está el desglose de lo que significa y cómo funciona:
-
-** (dos asteriscos): Esto indica que Python debe recoger todos los argumentos que le pasas con un nombre (ej. nombre="Juan", edad=30) y empaquetarlos en un diccionario.
-
-kwargs: Es el nombre de la variable que contendrá ese diccionario. 
-Podrías llamarla de otra forma (por ejemplo, **atributos), pero 
-**kwargs es una convención estándar en Python que todo el mundo reconoce.
-
-""" 
-class Schema(metaclass=MetaSchemaDeclarative):
-    
-    def __init__(self, **kwargs):
-        
-        # iterar sobre los argumentos o atributos que se le esten pasando
-        for key, value in kwargs.items():
-
-            # asignar cada argumento como un atributo de la isntancia 
-            setattr(self, key, value)
-
