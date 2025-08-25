@@ -1,14 +1,16 @@
 from fastapi import Depends
 from config.connect import DbPool, DB_CONFIG
-from pygem.main import create_db_pool
+from pygem.main import GEM
 from .repository import OrderRepository
 from .service import OrderService
 from .controller import OrderController
 
+# TODO: adaptar esto al nuevo enfoque de sessiones de GEM
 async def get_db_pool():
-    pool = await create_db_pool(DB_CONFIG)
+    gem = await GEM.start(DB_CONFIG)
+
     try: 
-        yield pool
+        yield gem
     finally:
         pool.close()
 

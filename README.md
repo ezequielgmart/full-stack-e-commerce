@@ -1,4 +1,4 @@
-# Full Stack E-Commerce Platform
+# Full Stack E-Commerce Platform [In progress]
 
 Full stack e commerce platform for a tech shop.  Powered by React, Python. 
 
@@ -42,3 +42,65 @@ Order History: Customers can view their order history and the current status of 
 
 ## Access and Permissions
 Admin and Store Views: The platform must have two distinct views. Your access level determines what you can do and see. For example, the admin view can only be accessed by users with an admin profile, while the store view is for customers.
+
+# // start the development server
+
+```bash
+uvicorn main:app --reload
+```
+
+
+
+## Migrations
+In order to import and create the GEM models for the repository, you need to go to the root (where your main file is located) and run 
+
+```bash
+py migrate.py
+```
+
+## API 
+
+### profiles
+
+* **Post**
+`[Expected json body]`
+
+```javascript
+
+{
+  "first_name":"Jon",
+  "last_name":"Doe",  
+  "gender":"Male"
+  }
+
+```
+
+
+### Shipping addresses
+
+* **Post**
+`[Expected json body]`
+
+```javascript
+
+{
+    "recipient_name":"jon doe",
+    "street_address":"Central Street 1556",
+    "city":"New York",
+    "state_province":"New York",
+    "country":"USA",
+    "postal_code":"11111",
+    "phone_number":"555-111-9999",
+    "is_default":true
+}
+
+```
+
+### Register new user
+```javascript
+{
+  "username":"Jon",
+  "email":"Doe",  
+  "password":"Male"
+  }
+```

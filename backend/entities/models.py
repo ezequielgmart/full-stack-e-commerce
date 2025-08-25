@@ -55,7 +55,16 @@ class ProductImage(Schema):
     _tablename_ = "product_images"
     product_id=Column(type=uuid.UUID, primary_key = True)
     image_id=Column(type=int)
-"""
+
+
+# class Auth(Schema):
+#     _tablename_ = "users"
+#     user_id = Column(type=uuid.UUID, primary_key = True)
+#     username = Column(type=str)
+#     email = Column(type=str)
+#     password = Column(type=str)
+#     is_admin = Column(type=bool)
+""".
 
 # Crea un nuevo objeto Producto
 new_product = Product(

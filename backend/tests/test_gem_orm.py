@@ -66,8 +66,6 @@ async def gem_session():
         print("❌ Conexión a la base de datos cerrada.")
 
 
-
-
 # # --- TESTS ASINCRONOS (con DB) ---
 @pytest.mark.asyncio
 async def test_get_all(gem_session):

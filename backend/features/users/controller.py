@@ -30,7 +30,7 @@ class UserController:
 
         new_user = NewUserResponse(**data_for_service)
 
-        return await self.service.register(new_user)
+        return await self.service.register_user_with_cart(new_user)
 
 
     # Hashing y verificación de contraseñas
