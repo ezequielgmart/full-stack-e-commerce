@@ -1,7 +1,7 @@
 
 from fastapi import HTTPException, status
 from typing import List
-from entities.product import Product
+from entities.product import Product, ProductCategoryStock
 from .service import ProductService
 
 class ProductController:
@@ -21,6 +21,25 @@ class ProductController:
                 detail=f"id '{product_id}' not found."
             )
         return product
+    
+    async def get_product_by_id_all_details(self, product_id: str) -> ProductCategoryStock:
+        product_vanilla = await self.service.get_product_by_id_all_details(product_id)
+
+        if not product_vanilla:
+                raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"id '{product_id}' not found."
+            )
+        
+        # data_for_response = {
+            
+        #     "product_id": uuid.UUID,
+        #     "name": str,
+        #     "description":str,
+        #     "unit_price":float,
+        # }
+        # product_with_all_details = ProductCategoryStock
+        return product_vanilla
     
     async def get_all_products_by_category(self, filter_key_value:str, limit:int, offset:int) -> List[Product]:
 

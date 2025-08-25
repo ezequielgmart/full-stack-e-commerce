@@ -1,5 +1,11 @@
 from fastapi import FastAPI
 from routes.v1.products import router as product_router
+from routes.v1.auth import router as auth_router
+from routes.v1.profiles import router as profile_router
+from routes.v1.shipping_addresses import router as shipping_addresses_router
+from routes.v1.users import router as users_router
+from routes.v1.shopping_cart import router as shopping_carts
+from routes.v1.orders import router as orders_routes
 from config.connect import create_db_pool
 
 from contextlib import asynccontextmanager
@@ -32,5 +38,38 @@ app.include_router(
     tags=["Product"]
 )
 
-# // start the development server
-# uvicorn main:app --reload
+app.include_router(
+    auth_router,
+    prefix="/auth",
+    tags=["Auth"]
+)
+
+app.include_router(
+    users_router,
+    prefix="/users",
+    tags=["Users"]
+)
+
+app.include_router(
+    profile_router,
+    prefix="/profile",
+    tags=["profile"]
+)
+
+app.include_router(
+    shipping_addresses_router,
+    prefix="/addresses",
+    tags=["Addresses"]
+)
+
+app.include_router(
+    shopping_carts,
+    prefix="/cart",
+    tags=["Carts"]
+)
+
+app.include_router(
+    orders_routes,
+    prefix="/orders",
+    tags=["Order"]
+)

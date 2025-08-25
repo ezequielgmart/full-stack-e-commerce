@@ -50,28 +50,34 @@ async def get_fields(table: str, pool: Pool) -> dict:
         ORDER BY
             c.ordinal_position;
     """
-    async with pool.acquire() as conn: 
+    async with pool.acquire() as conn:
         columns = await conn.fetch(query, table)
         fields = []
         
+        primary_key_name = None
+        
         for record in columns:
             is_null = record['is_nullable'] != "NO"
-            primary_key = record['is_primary_key'] == "YES"
-            data_type = record['data_type']
-
-            if primary_key:
-                primary_key_name = record['column_name']
+            is_primary_key = record['is_primary_key'] == "YES"
             
-            if record['data_type'] == 'character varying': 
-                data_type = "varchar"
+            # Check and store the primary key name
+            if is_primary_key:
+                if primary_key_name is None:
+                    primary_key_name = record['column_name']
+                
+            # Standardize the data type
+            data_type = record['data_type']
+            if data_type == 'character varying':
+                data_type = 'varchar'
             
             field = {
-                "is_primary_key": primary_key,
+                "is_primary_key": is_primary_key,
                 "name": record['column_name'],
                 "type": data_type,
                 "is_null": is_null
             }
-
+            
+            # Add the field to the list if it's not already there
             if not any(f.name == field["name"] for f in fields):
                 fields.append(Field(**field))
 
