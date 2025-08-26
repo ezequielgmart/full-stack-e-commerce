@@ -4,7 +4,13 @@ from pygem.queries import Query, Delete, Update, Add
 from pygem.schema import *
 """ Darle un enfoque de ORM a pygem """
 
+# TODO
+"""
+RESOLVER EL PROBLEMA DEL N + 1
 
+    def select_items_by_ids_query(self):
+        return f"SELECT * FROM {self.schema.get_table()} WHERE {self.schema.get_main_key()} = ANY($1::uuid[])"
+"""
 # El ORM
 # Esta clase es la responsable de consultar la db. 
 class GEM():
@@ -45,11 +51,11 @@ class GEM():
                 return result 
             
          
-    async def get_all(self, model_cls: object, query:str, conn=None) -> list[object]:
+    async def get_all(self, model_cls: object, query:str, params=None, conn=None) -> list[object]:
         
         records = await self._select(
             query=query,
-            params=None,
+            params=params,
             conn=conn
         )
         
@@ -168,7 +174,7 @@ class GEM():
 
 
 
-    async def _select(self, query:str, params:str = None, conn=None)-> list[dict]:
+    async def _select(self, query:str, params= None, conn=None)-> list[dict]:
         
         # Si no se pasa una conexión, adquiere una del pool.
         if conn is None: 
@@ -211,7 +217,7 @@ class GEM():
         return dict(record) if record else None
     
     # por lo general se usa para los select
-    async def _fetch_db(self, query:str, conn, params:list[str]=None):
+    async def _fetch_db(self, query:str, conn, params:list[Any]=None):
 
         # si la busqueda no tiene parametros
         if params is None:
@@ -221,7 +227,7 @@ class GEM():
         else: 
 
             # si tiene parametros add them    
-            records = await conn.fetch(query, params)   
+            records = await conn.fetch(query, *params)   
 
         return records
         

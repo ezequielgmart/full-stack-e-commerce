@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-# from routes.v1.products import router as product_router
+
 
 # from routes.v1.profiles import router as profile_router
 # from routes.v1.shipping_addresses import router as shipping_addresses_router
@@ -9,6 +9,7 @@ from fastapi import FastAPI
 # Auth
 from routes.v1.users import router as users_router
 from routes.v1.auth import router as auth_router
+from routes.v1.products import router as product_router
 from config.connect import create_db_pool
 
 from contextlib import asynccontextmanager
@@ -35,11 +36,11 @@ app = FastAPI(
 )
 
 # including the router
-# app.include_router(
-#     product_router,
-#     prefix="/products",
-#     tags=["Product"]
-# )
+app.include_router(
+    product_router,
+    prefix="/products",
+    tags=["Product"]
+)
 
 app.include_router(
     auth_router,

@@ -10,8 +10,8 @@ class ProductService:
         return await self.repository.get_by_id(product_id)
     
     
-    async def get_all_products(self, limit:int, offset:int) -> List[Product]:
-        return await self.repository.get_all_paginated(limit, offset)
+    async def get_all_products(self, limit:int, offset:int):
+        return await self.repository.get_all_products(limit, offset)
     
     async def get_all_products_by_category(self, filter_key_value:str, limit:int, offset:int) -> List[Product]:
 

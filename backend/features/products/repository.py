@@ -1,13 +1,13 @@
-from entities.product import Product
-from pygem.main import GemRepository
-from config.connect import DbPool 
-from entities.migrations import _products_gem, _categories_gem, _product_categories_gem
+from entities.models import Product, ProductImage, ProductInventory, Image
+from pygem.main import GEM
+from pygem.queries import Query
 
-class ProductRepository(GemRepository):
 
-    def __init__(self, pool: DbPool):
-        self.gem = _products_gem
-        super().__init__(model=Product, gem=self.gem, pool=pool)
+class ProductRepository():
+
+    def __init__(self, gem_session):
+        self.gem_session = gem_session
+
     """
         @method: Retrieves a paginated list of products belonging to a specific category.
         
@@ -23,17 +23,38 @@ class ProductRepository(GemRepository):
             - List[Dict[str, Any]] | None: A list of dictionaries representing the products,
               or None if no products are found for the specified category.
     """
-    async def get_all_products_by_category(self, filter_key_value:str, limit: int, offset: int):
+    async def get_all_products(self, limit: int, offset: int):
     
-        result = await self.manager.get_all_many_to_many_paginated(
-            many_to_many_gem=_product_categories_gem,
-            second_table_gem=_categories_gem,
-            filter_key_value=filter_key_value, #el valor del id de la categoria
-            limit=limit,
-            offset=offset
-        )      
+        query_string = Query(
+            Product,
+            Product.product_id,
+            Product.name,
+            Product.description,
+            Product.unit_price,
+            ProductInventory.stock
+        ).array_agg(
+            Image,
+            Image.image_url, 
+            "images"
+        ).join(
+            ProductInventory, 
+            Product.product_id, 
+            ProductInventory.product_id
+        ).join(
+            ProductImage, 
+            Product.product_id, 
+            ProductImage.product_id
+        ).join(
+            Image, 
+            ProductImage.image_id, 
+            Image.image_id, 
+            ProductImage
+        ).paginated().generate()
 
-        return result     
+        result = await self.gem_session.get_all(model_cls=Product, query=query_string, params=[limit, offset]) 
+
+        return result 
+
     
     async def get_products_by_name_like(
             self, 
@@ -80,11 +101,12 @@ class ProductRepository(GemRepository):
         en la base de datos y aumenta la latencia de tu aplicación, 
         lo cual se vuelve muy notable con muchos usuarios.
     """
-    async def get_products_by_ids_with_transaction(self, product_ids: list[str], conn) -> list:
+    # TODO
+    # async def get_products_by_ids_with_transaction(self, product_ids: list[str], conn) -> list:
 
-        result = await self.manager.get_items_by_ids_with_transaction(product_ids, conn)
+    #     result = await self.manager.get_items_by_ids_with_transaction(product_ids, conn)
 
-        return result
+    #     return result
 
     async def get_product_by_id_all_details(self, product_id:str):
 

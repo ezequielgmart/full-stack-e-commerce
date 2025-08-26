@@ -99,7 +99,8 @@ class Query():
         self.fields_to_select = fields if fields else "*"
         self.func_fields = []
         self.where_added: bool = False
-
+        self.paginated_items = []
+        self.paginated_added = False
         self.join_models = []
         self.joins = []
 
@@ -138,9 +139,10 @@ class Query():
             for join in self.joins
         ])
         
+        pagination = " ".join(self.paginated_items)
         clauses_str = " ".join(self.clauses)
         
-        return f"SELECT {select_clause} FROM {self.model._tablename_} {main_table_alias} {join_clauses} {clauses_str}".strip()
+        return f"SELECT {select_clause} FROM {self.model._tablename_} {main_table_alias} {join_clauses} {clauses_str} {pagination}".strip()
 
 
     def get_table_alias(self, model):
@@ -194,14 +196,14 @@ class Query():
         return self
 
     def paginated(self):
-
+        
         if self.where_added:
         
-            self.clauses.append(f"LIMIT $2 OFFSET $3")
+            self.paginated_items.append(f"LIMIT $2 OFFSET $3")
         
         else: 
             
-            self.clauses.append(f"LIMIT $1 OFFSET $2")
+            self.paginated_items.append(f"LIMIT $1 OFFSET $2")
 
         return self    
     

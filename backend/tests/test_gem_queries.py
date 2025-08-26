@@ -161,7 +161,36 @@ def test_functions_array_by_id():
     
     assert query_string == expected_query
 
-
+def test_functions_get_all_paginated():
+    query_string = Query(
+        Product,
+        Product.product_id,
+        Product.name,
+        Product.description,
+        Product.unit_price,
+        ProductInventory.stock
+    ).array_agg(
+        Image,
+        Image.image_url, 
+        "images"
+    ).join(
+        ProductInventory, 
+        Product.product_id, 
+        ProductInventory.product_id
+    ).join(
+        ProductImage, 
+        Product.product_id, 
+        ProductImage.product_id
+    ).join(
+        Image, 
+        ProductImage.image_id, 
+        Image.image_id, 
+        ProductImage
+    ).paginated().generate()
+    
+    expected_query = "SELECT products.product_id, products.name, products.description, products.unit_price, products_inventory.stock, array_agg(images.image_url) AS images FROM products AS products JOIN products_inventory AS products_inventory ON products.product_id = products_inventory.product_id JOIN product_images AS product_images ON products.product_id = product_images.product_id JOIN images AS images ON product_images.image_id = images.image_id GROUP BY products.product_id, products.name, products.description, products.unit_price, products_inventory.stock LIMIT $1 OFFSET $2"
+    
+    assert query_string == expected_query
 #     expected_query = """SELECT
 #     products.product_id,
 #     products.name,

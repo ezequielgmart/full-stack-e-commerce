@@ -9,7 +9,7 @@ class ProductController:
     def __init__(self, service:ProductService):
         self.service = service
     
-    async def get_all(self, limit:int, offset:int) -> List[Product]:
+    async def get_all(self, limit:int, offset:int) -> list:
         return await self.service.get_all_products(limit,offset)
     
     
