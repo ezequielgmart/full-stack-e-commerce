@@ -51,7 +51,7 @@ class GEM():
                 return result 
             
          
-    async def get_all(self, model_cls: object, query:str, params=None, conn=None) -> list[object]:
+    async def get_all(self, query:str, params=None, conn=None) -> list[object]:
         
         records = await self._select(
             query=query,
@@ -60,38 +60,60 @@ class GEM():
         )
         
         # Convierte cada registro de diccionario a una instancia del modelo
-        model_instances = []
-        for record in records:
-            instance = model_cls(**record)
-            instance._session = self  # Asigna la sesión a la instancia
-            model_instances.append(instance)
+        # model_instances = []
+        # for record in records:
+        #     instance = model_cls(**record)
+        #     instance._session = self  # Asigna la sesión a la instancia
+        #     model_instances.append(instance)
 
-        return model_instances
+        return records
+
+    async def get_all_ilike(self, query:str, keyword:str, limit:int, offset:int=0, conn=None) -> list[object]:
         
+            # esto asume que 
+        params = [f"%{keyword}%", limit, offset]# donde se supone que estara el termino de busqueda
+
+        records = await self._select(
+            query=query,
+            params=params,
+            conn=conn
+        )
+        
+        # Convierte cada registro de diccionario a una instancia del modelo
+        # model_instances = []
+        # for record in records:
+        #     instance = model_cls(**record)
+        #     instance._session = self  # Asigna la sesión a la instancia
+        #     model_instances.append(instance)
+
+        return records
+            
         
     async def get_one_or_none(
             self, 
-            model_cls: object, 
             query:str, 
-            param:str, 
+            params:list, 
+            model_cls: object=None, 
             conn=None
         ) -> object | None:
 
         record = await self._select(
             query=query,
-            params=param,
+            params=params,
             conn=conn
         )
         
         if record:
-            # 1. Crea una instancia del modelo con los datos del registro.
-            model_instance = model_cls(**dict(record[0]))
+
+            return record[0]
+            # # 1. Crea una instancia del modelo con los datos del registro.
+            # model_instance = model_cls(**dict(record[0]))
             
-            # 2. Asigna la sesión (self) a la nueva instancia
-            model_instance._session = self
+            # # 2. Asigna la sesión (self) a la nueva instancia
+            # model_instance._session = self
             
-            # 3. Retorna la instancia, lista para navegar por las relaciones
-            return model_instance
+            # # 3. Retorna la instancia, lista para navegar por las relaciones
+            # return model_instance
             
         return None 
 

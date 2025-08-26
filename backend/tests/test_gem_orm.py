@@ -4,7 +4,7 @@ from pygem.queries import Query, Add, Delete, Update
 import pytest
 import pytest_asyncio  # ← Importa explícitamente
 from config.connect import DB_CONFIG
-from entities.models import Product, User, ShoppingCart, ProductInventory, ProductImage, Image
+from entities.models import Product, User, ShoppingCart, ProductInventory, ProductImage, Image, ProductCategory, Category
 import uuid
 import datetime
 
@@ -103,10 +103,10 @@ async def test_get_all_one_to_one(gem_session):
         ProductImage
     ).generate()
     # Ahora devuelve una lista de objetos Product
-    result = await gem_session.get_all(model_cls=Product, query=query_string)
+    result = await gem_session.get_all(query=query_string)
 
-    assert isinstance(result[0].images, list)
-    assert len(result[0].images) > 0
+    assert isinstance(result[0]['images'], list)
+    assert len(result[0]['images']) > 0
 
 @pytest.mark.asyncio
 async def test_get_all_products_paginated(gem_session):
@@ -136,12 +136,67 @@ async def test_get_all_products_paginated(gem_session):
         ProductImage
     ).paginated().generate()
     # Ahora devuelve una lista de objetos Product
-    result = await gem_session.get_all(model_cls=Product, query=query_string, params=[10,0])
+    result = await gem_session.get_all(query=query_string, params=[10,0])
 
     
     assert len(result) > 0
-    assert isinstance(result[0].images, list)
-    assert len(result[0].images) > 0
+    assert isinstance(result[0]['images'], list)
+    assert len(result[0]['images']) > 0
+
+@pytest.mark.asyncio
+async def test_functions_get_ilike_paginated(gem_session):
+    query_string = Query(
+        Product,
+        Product.product_id,
+        Product.name,
+        Product.description,
+        Product.unit_price,
+        Category.category_name,
+        ProductInventory.stock
+    ).array_agg(
+        Image,
+        Image.image_url, 
+        "images"
+    ).join(
+        ProductCategory, 
+        Product.product_id, 
+        ProductCategory.product_id
+    ).join(
+        ProductInventory, 
+        Product.product_id, 
+        ProductInventory.product_id
+    ).join(
+        ProductImage, 
+        Product.product_id, 
+        ProductImage.product_id
+    ).join(
+        Category, 
+        ProductCategory.category_id, 
+        Category.category_id, 
+        ProductCategory
+    ).join(
+        Image, 
+        ProductImage.image_id, 
+        Image.image_id, 
+        ProductImage
+    ).ilike(Product.name).paginated().generate()
+
+    # pagination = await self.gem_session.get_all(query=pg_qry)
+    value = "AMD"
+    limit = 10
+    offset = 0
+
+    data = await gem_session.get_all_ilike(
+        query=query_string, 
+        keyword=value, 
+        limit=limit, 
+        offset=offset
+    ) 
+    
+    assert len(data) > 0
+    assert value in data[0]['name']
+    assert isinstance(data[0]['images'], list)
+    assert len(data[0]['images']) > 0
 # @pytest.mark.asyncio
 # async def test_get_byid_on_one_to_one(gem_session):
 #     id = "b30a1c8f-28c0-43f5-a8e9-d757d54402a1"

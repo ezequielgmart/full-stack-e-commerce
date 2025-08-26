@@ -1,7 +1,7 @@
 
 from fastapi import HTTPException, status
 from typing import List
-from entities.product import Product, ProductCategoryStock
+from entities.product import Product, ProductResponse, ProductAllDetails
 from .service import ProductService
 
 class ProductController:
@@ -22,7 +22,7 @@ class ProductController:
             )
         return product
     
-    async def get_product_by_id_all_details(self, product_id: str) -> ProductCategoryStock:
+    async def get_product_by_id_all_details(self, product_id: str) -> ProductAllDetails:
         product_vanilla = await self.service.get_product_by_id_all_details(product_id)
 
         if not product_vanilla:
@@ -56,7 +56,7 @@ class ProductController:
         key_value:str, 
         limit:int, 
         offset:int
-    ) -> List[Product]:
+    ):
 
         result = await self.service.get_all_products_by_name_like(
             key_value=key_value,

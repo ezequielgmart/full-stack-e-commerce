@@ -56,6 +56,16 @@ class ProductImage(Schema):
     product_id=Column(type=uuid.UUID, primary_key = True)
     image_id=Column(type=int)
 
+class Category(Schema): 
+    _tablename_ = "categories"
+    category_id=Column(type=uuid.UUID, primary_key = True)
+    category_name=Column(type=str)
+
+class ProductCategory(Schema): 
+    _tablename_ = "product_categories"
+    product_id=Column(type=uuid.UUID, primary_key = True)
+    category_id=Column(type=uuid.UUID, primary_key = True)
+
 
 # class Auth(Schema):
 #     _tablename_ = "users"

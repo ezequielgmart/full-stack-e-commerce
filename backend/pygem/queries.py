@@ -101,6 +101,7 @@ class Query():
         self.where_added: bool = False
         self.paginated_items = []
         self.paginated_added = False
+        self.like_added = False
         self.join_models = []
         self.joins = []
 
@@ -171,8 +172,17 @@ class Query():
         self.func_fields.append(f"array_agg({alias}.{field.name}) AS {label}")
 
         return self 
+    
+    def count(self, model, field, label:str=None):
 
-    def join(self, joined_model, main_on_key, joined_on_key, main_model=None):
+        alias = model._tablename_
+        
+        self.func_fields.append(f"COUNT({alias}.{field.name})")
+
+        return self 
+
+    def join(self, joined_model, main_on_key, joined_on_key, main_model=None):   
+        
         join_alias = self.get_table_alias(joined_model)
 
         if main_model is None:
@@ -197,7 +207,7 @@ class Query():
 
     def paginated(self):
         
-        if self.where_added:
+        if self.where_added or self.like_added:
         
             self.paginated_items.append(f"LIMIT $2 OFFSET $3")
         
@@ -214,17 +224,26 @@ class Query():
         return self    
     
     def ilike(self, filter:str):
+        self.like_added = True
+        self.clauses.append(f"WHERE {filter.name} ILIKE $1")
 
-        self.clauses.append(f"WHERE {filter} ILIKE $1")
+        return self
 
     def like(self, filter:str):
-
+        
+        self.like_added = True
         self.clauses.append(f"WHERE {filter} LIKE $1")
+
+        return self
 
     def _function_group_by(self, select_fields):
 
         selec_fields_clause = ", ".join(select_fields)
 
         self.clauses.append(f"GROUP BY {selec_fields_clause}")
+
+    def as_alias(self, field_name:str, alias:str):
+
+        return f"{field_name} AS {alias}"   
 
 

@@ -1,5 +1,5 @@
-from entities.models import Product, ProductImage, ProductInventory, Image
-from pygem.main import GEM
+from entities.models import Product, ProductImage, ProductInventory, Image, ProductCategory, Category
+from entities.product import ProductAllDetails,ProductResponse, Pagination
 from pygem.queries import Query
 
 
@@ -31,11 +31,16 @@ class ProductRepository():
             Product.name,
             Product.description,
             Product.unit_price,
+            Category.category_name,
             ProductInventory.stock
         ).array_agg(
             Image,
             Image.image_url, 
             "images"
+        ).join(
+            ProductCategory, 
+            Product.product_id, 
+            ProductCategory.product_id
         ).join(
             ProductInventory, 
             Product.product_id, 
@@ -45,36 +50,155 @@ class ProductRepository():
             Product.product_id, 
             ProductImage.product_id
         ).join(
+            Category, 
+            ProductCategory.category_id, 
+            Category.category_id, 
+            ProductCategory
+        ).join(
             Image, 
             ProductImage.image_id, 
             Image.image_id, 
             ProductImage
         ).paginated().generate()
 
-        result = await self.gem_session.get_all(model_cls=Product, query=query_string, params=[limit, offset]) 
+        pg_qry = Query(
+            Product,
+            Product.product_id
+        ).count(Product, Product.product_id).generate()
 
-        return result 
+        pagination = await self.gem_session.get_all(query=pg_qry)
 
-    
-    async def get_products_by_name_like(
+        data = await self.gem_session.get_all(query=query_string, params=[limit, offset]) 
+
+        pages_info = self.pagination_info(pagination, limit)
+        products = [ProductAllDetails(**item) for item in data]
+
+        return ProductResponse(info=pages_info, data=products)
+
+
+    def pagination_info(self, pagination_data:dict, limit:int): 
+
+        total_items = len(pagination_data)
+        per_page = limit
+        total_pages = int(total_items / limit)
+
+
+        return Pagination(total_items=total_items, total_pages=total_pages, per_page=per_page)
+
+    async def get_all_products_by_name_like(
             self, 
-            key_value:str,
+            value:str,
             limit:int, 
             offset:int
         ):
+        query_string = Query(
+            Product,
+            Product.product_id,
+            Product.name,
+            Product.description,
+            Product.unit_price,
+            Category.category_name,
+            ProductInventory.stock
+        ).array_agg(
+            Image,
+            Image.image_url, 
+            "images"
+        ).join(
+            ProductCategory, 
+            Product.product_id, 
+            ProductCategory.product_id
+        ).join(
+            ProductInventory, 
+            Product.product_id, 
+            ProductInventory.product_id
+        ).join(
+            ProductImage, 
+            Product.product_id, 
+            ProductImage.product_id
+        ).join(
+            Category, 
+            ProductCategory.category_id, 
+            Category.category_id, 
+            ProductCategory
+        ).join(
+            Image, 
+            ProductImage.image_id, 
+            Image.image_id, 
+            ProductImage
+        ).ilike(Product.name).paginated().generate()
 
-        field_key_name = "name"
+        # pagination = await self.gem_session.get_all(query=pg_qry)
 
-        result = await self.manager.get_all_paginated_like(
-            field_key_name=field_key_name,
-            key_value=key_value,
-            limit=limit,
+        data = await self.gem_session.get_all_ilike(
+            query=query_string, 
+            keyword=value, 
+            limit=limit, 
             offset=offset
+        ) 
+
+        total_items = len(data)
+        per_page = limit
+        total_pages = int(total_items / limit)
+
+        pages_info = Pagination(
+            total_items=total_items, 
+            per_page=per_page,
+            total_pages=total_pages
         )
 
-        return result 
+        products = [ProductAllDetails(**item) for item in data]
 
-    
+        return ProductResponse(info=pages_info, data=products)
+
+    async def get_by_id(
+            self, 
+            value:str
+        ):
+        query_string = Query(
+            Product,
+            Product.product_id,
+            Product.name,
+            Product.description,
+            Product.unit_price,
+            Category.category_name,
+            ProductInventory.stock
+        ).array_agg(
+            Image,
+            Image.image_url, 
+            "images"
+        ).join(
+            ProductCategory, 
+            Product.product_id, 
+            ProductCategory.product_id
+        ).join(
+            ProductInventory, 
+            Product.product_id, 
+            ProductInventory.product_id
+        ).join(
+            ProductImage, 
+            Product.product_id, 
+            ProductImage.product_id
+        ).join(
+            Category, 
+            ProductCategory.category_id, 
+            Category.category_id, 
+            ProductCategory
+        ).join(
+            Image, 
+            ProductImage.image_id, 
+            Image.image_id, 
+            ProductImage
+        ).where(Product.product_id).generate()
+
+        # pagination = await self.gem_session.get_all(query=pg_qry)
+
+        data = await self.gem_session.get_one_or_none(
+            query=query_string, 
+            params=[value]
+        ) 
+
+        return ProductAllDetails(**data)
+
     """
     # obtiene la info de todos los productos de golpe en lugar de 
     # hacer varias consultas al a db
@@ -101,15 +225,3 @@ class ProductRepository():
         en la base de datos y aumenta la latencia de tu aplicación, 
         lo cual se vuelve muy notable con muchos usuarios.
     """
-    # TODO
-    # async def get_products_by_ids_with_transaction(self, product_ids: list[str], conn) -> list:
-
-    #     result = await self.manager.get_items_by_ids_with_transaction(product_ids, conn)
-
-    #     return result
-
-    async def get_product_by_id_all_details(self, product_id:str):
-
-        result = await self.manager.get_product_by_id(product_id)
-
-        return result 

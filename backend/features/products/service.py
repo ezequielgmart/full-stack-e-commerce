@@ -1,5 +1,5 @@
 from typing import List, Optional
-from entities.product import Product,ProductRequest,ProductCategoryStock
+from entities.product import Product,ProductRequest,ProductResponse, ProductAllDetails
 from .repository import ProductRepository
 
 class ProductService:
@@ -30,17 +30,17 @@ class ProductService:
         offset:int
 
     ):
-        result = await self.repository.get_products_by_name_like(
-            key_value=key_value,
+        result = await self.repository.get_all_products_by_name_like(
+            value=key_value,
             limit=limit,
             offset=offset
         )
 
         return result
 
-    async def get_product_by_id_all_details(self, product_id:str) -> Optional[ProductCategoryStock]:
+    async def get_product_by_id_all_details(self, product_id:str)->ProductAllDetails:
 
-        result = await self.repository.get_product_by_id_all_details(product_id)
+        result = await self.repository.get_by_id(product_id)
 
         return result
 
