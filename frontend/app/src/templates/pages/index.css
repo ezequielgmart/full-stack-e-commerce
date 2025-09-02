@@ -1,0 +1,9 @@
+@import url('../../styles/_variables.css');
+
+.app-store-page-container{
+    
+    background-color: var(--color-white);
+}
+.root{
+    background-color: var(--color-white);
+}

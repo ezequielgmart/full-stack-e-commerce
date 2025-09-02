@@ -1,0 +1,19 @@
+@import url('../../../styles/_variables.css');
+
+
+.user-navbar-container{
+    border: 1px solid var(--color-warning);
+    /* width: 20%; */
+    /* display: flex;
+    justify-content: flex-start;
+    align-items: center; */
+    
+    display: grid;
+    grid-template-columns: 80% 1fr;
+}
+
+.user-address-navbar-section, .orders-navbar-container{
+    
+    border: 1px solid var(--color-warning);
+
+}

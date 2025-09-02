@@ -1,0 +1,23 @@
+/* src/styles/_variables.css */
+
+:root {
+
+  --color-primary: #102a43;
+  --color-success: #0056b3;
+  --color-warning:#B31000;
+  --color-neutral:#B37400;
+
+  --color-secondary: #6c757d;
+  --color-secondary-dark: #545b62;
+  --color-background:#f3f3f3;
+
+  --color-black: #000;
+  --color-white: #fff;
+  --color-light-gray: #f8f9fa;
+  --color-dark-gray: #343a40;
+
+  --color-secondary-black:#202020;
+  --color-third-black:#2c2c2c;
+
+  --test-border:1px solid red;
+}

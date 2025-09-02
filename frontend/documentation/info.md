@@ -35,10 +35,6 @@ Label Generation: Shipping labels containing the customer's information are gene
 
 Tracking: The customer receives a tracking number to follow their shipment's progress.
 
-## Customer Service
-Returns and Refunds: The system must include a process for handling product return requests, verifying conditions, and processing refunds.
-
-Order History: Customers can view their order history and the current status of their purchases.
 
 ## Access and Permissions
 Admin and Store Views: The platform must have two distinct views. Your access level determines what you can do and see. For example, the admin view can only be accessed by users with an admin profile, while the store view is for customers.

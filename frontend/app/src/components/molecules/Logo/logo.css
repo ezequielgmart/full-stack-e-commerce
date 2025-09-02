@@ -1,0 +1,11 @@
+@import url('../../../styles/_variables.css');
+
+
+.logo-container{
+    border: 1px solid var(--color-warning);
+
+    margin-left: 0;
+    
+
+
+}

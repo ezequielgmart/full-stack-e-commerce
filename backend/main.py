@@ -11,8 +11,9 @@ from routes.v1.users import router as users_router
 from routes.v1.auth import router as auth_router
 from routes.v1.products import router as product_router
 from config.connect import create_db_pool
-
+from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+
 
 # App events in order to manage the conections pool
 @asynccontextmanager
@@ -33,6 +34,23 @@ app = FastAPI(
     description="E-commerce shop api.",
     version="0.1.0",
     lifespan=lifespan
+)
+
+# 1. Lista de orígenes permitidos (tu frontend)
+#    Asegúrate de que el puerto coincida con el de tu aplicación de React/Vite
+origins = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://localhost:4200",
+]
+
+# 2. Añadir el middleware de CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # Permite los orígenes especificados
+    allow_credentials=True, # Permite cookies y credenciales de autenticación
+    allow_methods=["*"],    # Permite todos los métodos HTTP (GET, POST, etc.)
+    allow_headers=["*"],    # Permite todos los encabezados HTTP
 )
 
 # including the router

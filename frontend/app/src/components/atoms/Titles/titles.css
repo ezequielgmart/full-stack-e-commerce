@@ -1,0 +1,16 @@
+@import url('../../../styles/_variables.css');
+
+.card-title{
+    margin: 0;
+}
+
+.card-sub-title-secondary{
+    color: var(--color-secondary);
+    font-size: 0.7em;
+}
+
+
+.product-detail-title-h1{
+        font-size: 1.5em;
+        font-weight: none;
+}

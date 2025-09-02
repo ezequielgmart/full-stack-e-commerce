@@ -21,9 +21,8 @@ class AuthRepository():
         ).where(User.username).generate()    
 
         result = await self.gem_session.get_one_or_none(
-            model_cls = User,
             query=qrystr,
-            param=username
+            params=[username]
         ) 
 
         return result 

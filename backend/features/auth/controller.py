@@ -28,7 +28,7 @@ class AuthController:
         if not result:
             raise HTTPException(status_code=400, detail="Incorrect username or password")
 
-        if not self.verify_password(user_data.password, result.password):
+        if not self.verify_password(user_data.password, result['password']):
             raise HTTPException(status_code=400, detail="Incorrect username or password")
         
         # anterior mente me retornaba la info del usuario logeado. Entonces ahora lo que debe de hacer es retornarme el token creado. 
@@ -38,7 +38,7 @@ class AuthController:
         ## 8/12 - Este codigo es para devolver el token creado si se loguea satisfactoria mente
 
         # Corrected line: Convert the UUID to a string
-        access_token_payload = {"sub": str(result.user_id)}
+        access_token_payload = {"sub": str(result['user_id'])}
 
         try:
             expire_in_minutes = int(TOKEN_CONFIG['access_token_expire_minutes'])

@@ -1,0 +1,25 @@
+.img-viewer-container{
+
+    border: 1px solid red;
+   
+}
+
+.img-viewer-body{
+    display: grid;
+    grid-template-columns: 10% 1fr;
+     gap: 15px;
+}
+.img-viewer-preview-list{
+    
+    border: 1px solid red;
+}
+.img-viewer-showing-item{
+    
+    border: 1px solid green;
+}
+.img-viewer-footer-content{
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+
+}

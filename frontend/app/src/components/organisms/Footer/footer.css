@@ -1,0 +1,7 @@
+@import url('../../../styles/_variables.css');
+
+.main-footer{
+    background-color: var(--color-dark-gray);
+    min-height: 300px;
+    margin-top: 100px;
+}

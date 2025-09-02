@@ -1,0 +1,73 @@
+@import url('../../../styles/_variables.css');
+
+
+.span-neutral{
+    font-size: 0.8em;
+
+
+}
+
+.strong-navbar-white-s, .span-navbar-white-s{
+
+    color: var(--color-white); 
+}
+.strong-navbar-white-s{
+
+    font-size: 0.9em;
+}
+
+.span-navbar-white-s{
+    font-size: 0.8em;
+
+}
+
+.span-currency-sub-title{
+    
+    font-size: 1.5em;
+}
+.product-card-span-highlight{
+    
+    font-size: 0.9em;
+    
+    color: var(--color-success); 
+}
+.product-card-span{
+    
+    font-size: 1em;
+    
+    color: var(--color-black); 
+}
+
+.price-container {
+  /* Usamos flexbox para alinear todo fácilmente */
+  display: inline-flex;
+  align-items: flex-start; /* Alinea los elementos en la parte superior */
+  line-height: 1; /* Evita alturas de línea extrañas */
+}
+
+.price-symbol {
+  font-size: 0.7em; /* Tamaño de letra más pequeño */
+  margin-right: 2px;
+  /* La alineación de flex-start ya lo sube un poco, pero puedes ajustarlo si es necesario */
+  /* position: relative; */
+  /* top: -0.2em; */
+}
+
+.price-integer {
+  font-size: 1.4em; /* Tamaño de letra grande */
+  font-weight: bold;
+}
+
+.price-cents {
+  font-size: 0.7em; /* Mismo tamaño pequeño que el símbolo */
+  /* Igual que el símbolo, ajusta si es necesario */
+  /* position: relative; */
+  /* top: -0.2em; */
+  margin-left: 2px;
+}
+
+/* Opcional: Para agregar el punto decimal visualmente */
+.price-integer::after {
+    content: '.';
+    font-weight: bold;
+}

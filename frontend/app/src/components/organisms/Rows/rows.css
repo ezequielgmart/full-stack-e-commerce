@@ -1,0 +1,17 @@
+@import url('../../../styles/_variables.css');
+
+.home-section-row{
+    display: grid;
+    /* Crea una cuadrícula de 2 columnas con el mismo tamaño */
+    grid-template-columns: 24% 24% 24% 24%;
+
+    /* Un espacio opcional entre los cuadrados */
+    /* border: var(--test-border); */
+    margin-top: 2%;
+    gap: 1%;
+    width: 100%;
+
+
+  /* position: absolute;
+  z-index: 2; Valor alto */
+}
