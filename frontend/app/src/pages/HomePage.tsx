@@ -1,17 +1,18 @@
-import { NavBar } from "../components/organisms/index";
+import { NavBar, Main } from "../components/organisms/index";
 
-export default function ProductDetailPage() {    
+export default function HomePage() {    
     
     return (
         <>
             <NavBar></NavBar>
-
-            {/* <ProductDetailArticle data={product}/>
-            
-            <HorizontalCarrousel value='Related to this product'/>
-            <HorizontalCarrousel value='Products you might like'/>
-            
-            <HorizontalCarrousel value='Offers on this category'/> */}
+            <Main>
+                <aside className='card-one'>
+                    <h2>Aside</h2>
+                </aside>
+                <article className='card-two'>
+                    <h2>Article</h2>
+                </article>
+            </Main>
 
         </>
     );

@@ -1,6 +1,4 @@
 import { ProductDetailPage, HomePage } from '../src/pages/index';
-
-
 // import HomePage from './pages/index.ts'
 
 import { Routes, Route } from 'react-router-dom';

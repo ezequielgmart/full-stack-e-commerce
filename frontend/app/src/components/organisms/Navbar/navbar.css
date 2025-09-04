@@ -1,11 +1,17 @@
 @import url('../../../styles/_variables.css');
 
 .main-nav-bar{
+  /* La magia principal */
+  position: fixed;
+  top: 0; /* Pégalo en la parte superior */
+  left: 0; /* Pégalo a la izquierda */
+  
+  /* Estilos importantes para que funcione bien */
+  width: 100%; /* Asegura que ocupe todo el ancho de la pantalla */
+  background-color: var(--color-primary);
+/* Dale un color de fondo para que no sea transparente */
+  z-index: 1000; /* Ponle un z-index alto para que esté por encima de todo el resto del contenido */
 
-    padding: 0;
-    background-color: var(--color-primary);
-
-    
     box-shadow: 5px 2px 14px 1px rgba(158,158,158,0.72);
 -webkit-box-shadow: 5px 2px 14px 1px rgba(158,158,158,0.72);
 -moz-box-shadow: 5px 2px 14px 1px rgba(158,158,158,0.72);
