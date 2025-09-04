@@ -8,8 +8,7 @@
 
 .detail-item-row{
     display: grid;
-    grid-template-columns: 25% 1fr;
-    gap: 10px;
+    grid-template-columns: 20% 1fr;
     width: 90%;
     margin-left: auto;
     margin-right: auto;

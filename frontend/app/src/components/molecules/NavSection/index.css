@@ -1,0 +1,86 @@
+@import url('../../../styles/_variables.css');
+
+
+.navbar-section{
+    border: 1px solid var(--color-primary);
+    /* width: 20%; */
+    /* display: flex;
+    justify-content: flex-start;*/
+    padding: 1%;
+    align-items: center; 
+    color: var(--color-white);
+}
+.navbar-btn{
+    /* border: 1px solid var(--color-white); */
+  position: relative; 
+  
+  /* Es buena idea que sea un bloque en línea para que no ocupe todo el ancho */
+  display: inline-block; 
+  
+  /* Tus otros estilos como el padding */
+  padding: 10px; /* Ejemplo de un padding fijo */
+    color: var(--color-white);
+}
+
+.navbar-btn--super-padding{
+
+    padding: 2%;
+}
+
+
+.navbar-header{
+    /* border: 1px solid var(--color-white); */
+
+
+}
+
+.navbar--cols--2{
+    /* border: 1px solid var(--color-white); */
+
+    display: grid;
+    grid-template-columns: 8% 1fr;
+    gap: 5px;
+}
+
+.navbar-section:hover{
+
+    border: 1px solid var(--color-white);
+}
+
+/* .navbar-btn:hover{
+    
+    border: 1px solid var(--color-white);
+} */
+.cart-body-container{
+
+    align-items: center;
+}
+.cart-baloon-items-qty {
+  /* 1. La magia del posicionamiento */
+  position: absolute;
+  top: 1px;   /* Ajusta la distancia desde la parte superior del padre */
+  right: 6px; /* Ajusta la distancia desde la derecha del padre */
+
+  /* 2. Para un centrado perfecto sobre la esquina (opcional pero recomendado) */
+  /* transform: translate(50%, -50%); */ /* Descomenta y ajusta si quieres que se mueva más hacia afuera */
+
+  /* 3. Estilos para la apariencia de círculo */
+  background-color: var(--color-warning); /* Esto está perfecto */
+  color: white; /* Añade color de texto para que el número sea visible */
+  border-radius: 45%; /* Esto garantiza un círculo perfecto */
+  
+  /* 4. Dimensiones y centrado del número */
+  min-width: 25px; /* Asegura un ancho mínimo incluso con un solo dígito */
+  height: 20px;
+  font-size: 12px; /* Un tamaño de letra pequeño */
+  font-weight: bold;
+  
+  /* Usamos Flexbox para centrar el número perfectamente */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* 5. Pequeños detalles */
+  /* border: 2px solid white;  */
+  box-sizing: border-box; /* Asegura que el padding/borde no afecten el tamaño total */
+}

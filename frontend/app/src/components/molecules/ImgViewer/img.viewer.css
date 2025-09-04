@@ -1,6 +1,6 @@
 .img-viewer-container{
 
-    border: 1px solid red;
+
    
 }
 
@@ -11,11 +11,11 @@
 }
 .img-viewer-preview-list{
     
-    border: 1px solid red;
+
 }
 .img-viewer-showing-item{
     
-    border: 1px solid green;
+
 }
 .img-viewer-footer-content{
     width: 50%;

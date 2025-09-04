@@ -1,7 +1,55 @@
 @import url('../../../styles/_variables.css');
 
+.span{
 
-.span-neutral{
+  font-weight: none;
+
+}
+
+
+.strong{
+
+  font-weight: bold;
+
+}
+
+/* color */
+.strong--ligth{
+
+  color: var(--color-white);
+
+
+}
+
+.span--darkligth{
+
+  color: var(--color-light-gray);
+}
+/* size */
+.span--small{
+
+  font-size: 12px;
+
+}
+
+.strong--big{
+
+  font-size: var(--text-l);
+
+}
+
+.span--big{
+
+  font-size: var(--text-l);
+
+}
+
+.span--x-big{
+
+  font-size: var(--text-super);
+
+}
+/* .span-neutral{
     font-size: 0.8em;
 
 
@@ -38,12 +86,12 @@
     color: var(--color-black); 
 }
 
-.price-container {
-  /* Usamos flexbox para alinear todo fácilmente */
+/* .price-container {
+   Usamos flexbox para alinear todo fácilmente 
   display: inline-flex;
-  align-items: flex-start; /* Alinea los elementos en la parte superior */
-  line-height: 1; /* Evita alturas de línea extrañas */
-}
+  align-items: flex-start; Alinea los elementos en la parte superior 
+  line-height: 1; Evita alturas de línea extrañas 
+}*/
 
 .price-symbol {
   font-size: 0.7em; /* Tamaño de letra más pequeño */
@@ -52,22 +100,37 @@
   /* position: relative; */
   /* top: -0.2em; */
 }
-
+/*
 .price-integer {
   font-size: 1.4em; /* Tamaño de letra grande */
-  font-weight: bold;
-}
 
-.price-cents {
+
+/*
+.price-integer-bold {
+  font-size: 1.4em; /* Tamaño de letra grande */
+  /* font-weight: bold;
+} */
+
+/* .price-cents {
   font-size: 0.7em; /* Mismo tamaño pequeño que el símbolo */
   /* Igual que el símbolo, ajusta si es necesario */
   /* position: relative; */
   /* top: -0.2em; */
-  margin-left: 2px;
-}
+
+/* } */
 
 /* Opcional: Para agregar el punto decimal visualmente */
-.price-integer::after {
+/* .price-integer::after {
     content: '.';
     font-weight: bold;
-}
+} */
+
+/* .detail-item-strong, .detail-item-span{
+    
+  font-size: 0.9em;
+} */
+
+/* .component-span-s, .component-strong-s{
+    
+  font-size: 0.9em;
+}  */

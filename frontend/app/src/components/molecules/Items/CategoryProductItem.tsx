@@ -1,23 +1,23 @@
 
-import ItemImg from "../../atoms/Imgs/ItemImg";
-import NeutralSpan from "../../atoms/Span/NeutralSpan";
+// import ItemImg from "../../atoms/Imgs/ItemImg";
+// import NeutralSpan from "../../atoms/Span/NeutralSpan";
 
-// types
-import type { ItemProps } from "../../../types"
+// // types
+// import type { ItemProps } from "../../../types"
 
-import './items.css';
+// import './items.css';
 
 
-export default function CategoryProductItem({ itemName, ImgSrc }:ItemProps){
+// export default function CategoryProductItem({ itemName, ImgSrc }:ItemProps){
 
-    return(
-        <div className="item-container">
-            <div className="item-container-head">
-                <ItemImg src={ImgSrc}/>
-            </div>
-            <div className="item-container-body">
-                <NeutralSpan value={itemName}/>
-            </div>
-        </div>
-    )
-}
+//     return(
+//         <div className="item-container">
+//             <div className="item-container-head">
+//                 <ItemImg src={ImgSrc}/>
+//             </div>
+//             <div className="item-container-body">
+//                 <NeutralSpan value={itemName}/>
+//             </div>
+//         </div>
+//     )
+// }

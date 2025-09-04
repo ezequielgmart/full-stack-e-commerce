@@ -1,14 +1,18 @@
-import HomeArticle from "../components/organisms/Article/HomeArticle";
-import StorePageTemplate from "../templates/pages/StorePage";
+import { NavBar } from "../components/organisms/index";
 
-function HomePage() {
+export default function ProductDetailPage() {    
+    
     return (
         <>
-            <StorePageTemplate>
-            <HomeArticle/>
-            </StorePageTemplate>
+            <NavBar></NavBar>
+
+            {/* <ProductDetailArticle data={product}/>
+            
+            <HorizontalCarrousel value='Related to this product'/>
+            <HorizontalCarrousel value='Products you might like'/>
+            
+            <HorizontalCarrousel value='Offers on this category'/> */}
+
         </>
     );
 }
-
-export default HomePage;

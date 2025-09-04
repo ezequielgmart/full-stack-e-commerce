@@ -1,21 +1,47 @@
 @import url('../../../styles/_variables.css');
 
-.a-generic-neutral{
-    text-decoration:none;
-    font-size: 0.8em;
-}
-
-.link-wrapper{
-    
+.link{
     text-decoration:none;
 }
 
-.home-logo-link{
-    
-    text-decoration:none;
+.btn { 
+    color: var(--color-black);
 
 }
-.home-logo-h2{
+/* type */
+.link--logo{
     color: var(--color-white);
-    margin: 0;
+
+}
+
+.link--icon{
+    
+    color: var(--color-white);
+}
+
+/* variant */
+
+.link-white{ 
+    color: var(--color-white);
+}
+/* sizes */
+
+
+.link--medium{ 
+    font-size: var(--text-l);
+    /* padding: 1.5%; */
+
+}
+
+.link--big{ 
+    font-size: var(--text-xl);
+    padding: 1.5%;
+    align-items: center;
+    text-align: center;
+}
+
+/* pseudo classes */
+.link:visited {
+    
+    color: var(--color-white);
 }

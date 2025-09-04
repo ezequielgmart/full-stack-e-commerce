@@ -1,14 +1,14 @@
-import HomeTitle from "../../atoms/Link/HomeTitle";
-import './logo.css'
+// import HomeTitle from "../../atoms/Link/HomeTitle";
+// import './logo.css'
 
-function LogoNavBar() {
+// function LogoNavBar() {
 
-    return (
-        <div className="logo-container">
-            {/* Usa la propiedad text de los datos */}
-            <HomeTitle/>
-        </div>
-    );
-}
+//     return (
+//         <div className="logo-container">
+//             {/* Usa la propiedad text de los datos */}
+//             <HomeTitle/>
+//         </div>
+//     );
+// }
 
-export default LogoNavBar;
+// export default LogoNavBar;

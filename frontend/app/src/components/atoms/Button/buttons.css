@@ -1,16 +1,41 @@
 @import '../../../styles/_variables.css';
 
+/* generic */
+.btn {
+    /* color: var(--color-black); */
+}
 
-.btn-login{
+/* color */
+.btn--primary{
     background-color: var(--color-primary);
-    color: var(--color-white);
-    font-size: 1em;
+}
+
+.btn--ligth{
+    background-color: var(--color-light-primary);
+    /* border: 1px solid red; */
+}
+
+/* type */
+
+.btn--search { 
+   border-top-right-radius: 5px; 
+   border-bottom-right-radius: 5px; 
+}
+/* size */
+
+.btn--medium{
+    font-size: 23px;
+    padding: 2%;
+    text-align: center;
+}
+
+.btn--big{
+    font-size: 2em;
     padding: 1%;
     text-align: center;
 }
 
-
-.primary-btn{
+/* .primary-btn{
     text-decoration: none;
 }
 .primary-btn-container{
@@ -27,39 +52,6 @@
     
 }
 
-.btn-icon-white{
-    
-    color: var(--color-white); 
-    background-color: var(--color-secondary-black);
-    border:1px solid var(--color-black);
-    font-size: 1.5em;
-    align-items: center;
-    text-align: center;
-    padding: 0.7%;
-
-    border-top-right-radius:5px;
-    border-bottom-right-radius:5px;
-}
-
-.btn-icon-white:hover{
-    
-    background-color: var(--color-third-black);
-}
-/* icons */
-.nav-bar-icon-s, .nav-bar-icon-m, .nav-bar-icon-l{
-
-    color: var(--color-white); 
-}
-
-.nav-bar-icon-s{
-
-    font-size: 15px;
-}
-
-.nav-bar-icon-m{
-
-    font-size: 25px;
-}
 
 .shopping-cart-btn{
     align-items: center;
@@ -84,4 +76,4 @@
     border-radius: 5px;
     color: var(--color-white);
     width: 150px;
-}
+} */

@@ -1,10 +1,10 @@
-import './pages.footers.css'
+// import './pages.footers.css'
 
-export default function ResultPageFooter  (){ 
+// export default function ResultPageFooter  (){ 
 
-    return (
-        <section className='page-article-footer'>
-            <h5>This is the page footer</h5>
-        </section>
-    )
-}
+//     return (
+//         <section className='page-article-footer'>
+//             <h5>This is the page footer</h5>
+//         </section>
+//     )
+// }

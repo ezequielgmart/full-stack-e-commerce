@@ -23,7 +23,7 @@
 }
 
 .img-card-cover{
-  border:1px solid yellow ;
+
   
   height: 200px;
   
@@ -31,14 +31,6 @@
 }
 
 
-.img-viewer-preview-item{
-  
-  border:1px solid yellow ;
-  
-  height: 50px;
-  
-  width: 50px;
-}
 
 .img-viewer-showing-item{
   
@@ -48,12 +40,12 @@
 }
 .img-viewer-preview-item:hover{
   
-  border:1px solid blue ;
+  border:1px solid red ;
 }
 .img-viewer-preview-item{
   
-  border:1px solid yellow ;
-  
+  border:1px solid var(--color-secondary-dark) ;
+  border-radius: 5px;
   height: 50px;
   
   width: 50px;

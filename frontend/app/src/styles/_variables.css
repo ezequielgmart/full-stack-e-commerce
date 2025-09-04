@@ -2,7 +2,7 @@
 
 :root {
 
-  --color-primary: #102a43;
+  --color-primary: #061b2e;
   --color-success: #0056b3;
   --color-warning:#B31000;
   --color-neutral:#B37400;
@@ -13,11 +13,20 @@
 
   --color-black: #000;
   --color-white: #fff;
-  --color-light-gray: #f8f9fa;
+  --color-light-gray: #dfdfdf;
+  --color-light-primary: #afcff1;
   --color-dark-gray: #343a40;
 
   --color-secondary-black:#202020;
   --color-third-black:#2c2c2c;
 
   --test-border:1px solid red;
+
+  /* text sizes */
+  --text-s: 9px;
+  --text-m: 11px;
+  --text-l: 14px;
+  --text-xl: 18px;
+  --text-xxl: 24px;
+  --text-super: 30px;
 }

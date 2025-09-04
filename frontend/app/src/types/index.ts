@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 export interface ProductData {
   itemName: string;
   ImgSrc: string;
@@ -36,86 +38,73 @@ export interface ProductCover {
 
 /* ************* PROPS **********/
 
-export interface ProductListProps { 
-    data:Array<ProductCover>;
-}
-
-export interface ProductCoverCardProps { 
-    data:ProductCover;
-}
-
-export interface ProductDetailProps { 
-    data:Product;
-}
-
-export interface CategoryProductCardProps{
-    categoryTitle:string;
-    data:Array<ProductData>;
-
-}
-
-export interface ItemDetailprops {
-    detail:string;
-    value:string;
-}
-
-export interface SponsoredProductCardProps{
-    data:FullProductData;
-
-}
-
-export interface CardImgProps{
-    src:string;
-    className:string;
-}
-
-export interface ItemImgProps{
-    src:string;
-}
-
-export interface GenericSpanProps{ 
-    
-    value:string;
-    className:string;
-}
-
-export interface CurrencySpanProps{ 
-    
-    amount:number;
-
-}
-
-
-export interface GenericTxtProps{ 
-    
-    value:string;
-    className:string;
-}
-
-
-export interface ItemProps{
-    itemName:string;
-    ImgSrc:string;
-}
-
-
-export interface BtnLinkProps{
-    href:string;
-    value:string; 
-}
-
-// atoms que solo necesiten que se le pase un texto
-export interface TextProps{ 
-    value:string;
-}
-
 export interface BtnProps{
-    value:string; 
-    onClick: ()=>void;
+    variant:string; // success / primary / alert
+    size:string; // big, medium, small
+    onClick: ()=>void; // function 
+    children:ReactNode ; // the value the btn shows like Search / etc or the icon
 }
-export interface BtnPropsNoClass{
-    className:string;
-    value:string; 
-    onClick: ()=>void;
+
+export interface ImgProps{
+    
+    src:string; // /products/laptop 1.jpg
+    variant:string; // success / primary / alert
+    size:string; // big, medium, small
+
+
+}
+
+export interface InputProps{
+    
+    type:string; // text, text-area
+    variant:string; // success / primary / alert
+    size:string; // big, medium, small
+    placeholder:string; // something to show when it's empty
+
+}
+
+export interface LinkProps{ 
+    
+    href:string; // /products /home
+    type:string; // Title, Sub-title,
+    variant:string; //  Neutral, alert
+    size:string; // big, medium, small
+    children:ReactNode ; // the value the atom shows like Search / etc or the icon
+    
+}
+
+export interface SpanProps{ 
+    
+    type:string; // Strong, Span
+    variant:string; //  Neutral, alert
+    size:string; // big, medium, small
+    children:ReactNode ; // the value the atom shows like Search / etc or the icon
+}
+
+export interface TitleProps{
+    level:string; // 1 for h1, 2 for h2, etc
+    variant:string; //  Neutral, alert
+    size:string; // big, medium, small
+    children:ReactNode ; // the value the atom shows like Search / etc or the icon
+}
+
+export interface BtnLinkProps {
+  /** La URL a la que el enlace debe navegar. */
+    href: string;
+  
+    variant:string; //  Neutral, alert
+    size:string; // big, medium, small
+
+    type:string; // search, action
+  
+    /** El contenido del enlace (texto, ícono, etc.). */
+    children: ReactNode;
+
+}
+/* molecules  */
+export interface NavSectionProps{
+    columns:'1' | '2' | '3' | '4';
+    header:ReactNode;
+    body:ReactNode;
 }
 /* ************* END OF PROPS **********/

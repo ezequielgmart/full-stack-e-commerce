@@ -1,5 +1,5 @@
 
-import Span from '../../atoms/Span/Span';
+import Span from '../../atoms/Span';
 import Strong from '../../atoms/Span/Strong';
 import './index.css'
 
