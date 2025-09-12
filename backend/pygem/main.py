@@ -1,6 +1,6 @@
 import asyncpg
 from typing import Any
-from pygem.queries import Query, Delete, Update, Add
+from pygem.queries import Add
 from pygem.schema import *
 """ Darle un enfoque de ORM a pygem """
 
@@ -17,26 +17,12 @@ class GEM():
     def __init__(self, pool):
         self.pool = pool
 
-    # Es la unica forma de tener un pool ya que esto es asincrono y los __init__ no pueden serlo. 
-    @classmethod
-    async def start(cls, config:dict[str, any]):
-        """
-        Método de fábrica asíncrono para crear una instancia de GEM.
-        """
-        try: 
-            pool = await asyncpg.create_pool(**config)
-            return cls(pool)
-        except Exception as e:
-            print(f"error connecting to DB: {e}")
-            return None
-        
     """ 
     ********************************************
     METODOS EXTERNOS, PARA UTILIZAR EN LOS REPO
     ********************************************
     """   
-    def get_session(self):
-        return self.pool
+
     
     async def begin_transaction(self, callback):
         """
@@ -68,10 +54,10 @@ class GEM():
 
         return records
 
-    async def get_all_ilike(self, query:str, keyword:str, limit:int, offset:int=0, conn=None) -> list[object]:
+    async def get_all_ilike(self, query:str, keyword:str, limit:int, offset:int=0, where_clause_value=None, conn=None) -> list[object]:
         
             # esto asume que 
-        params = [f"%{keyword}%", limit, offset]# donde se supone que estara el termino de busqueda
+        params = [where_clause_value, f"%{keyword}%", limit, offset]# donde se supone que estara el termino de busqueda
 
         records = await self._select(
             query=query,

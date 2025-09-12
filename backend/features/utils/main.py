@@ -1,24 +1,7 @@
-def validate_email(email:str) -> bool:
-    # 
 
-    if "@" in email :
-        data = email.split("@")
 
-        if len(data) ==2:
-            for i in data:
-                    
-                if i == "":
-                    return False
-                
-            return True
-        else:
-            return False
-            
+def format_dict_to_pydancti_model(pydantic_model, data:list[dict]) -> list[dict]: 
 
-"""
-Not allowed 
-test@domain (missing the TLD like .com)
-test@domian. (trailing dot)
-_@test.com (some characters are not allowed)
+    result: list = [pydantic_model(**item) for item in data]
 
-"""
+    return result

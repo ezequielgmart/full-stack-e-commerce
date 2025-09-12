@@ -1,0 +1,36 @@
+@import url('../../../styles/_variables.css');
+
+.pagination-nav{
+
+    /* border: 1px solid green; */
+}
+
+.nav--horizontal{
+    display: flex;
+    justify-content:flex-start;
+    /* gap: 0.5rem;  */
+}
+
+.pagination-btn{
+      cursor: pointer;
+    font-size: 15px;
+    border: none;
+    border-radius: 0px;
+    /* border-right: 1px solid green; */
+    background-color:var(--color-background-secondary);
+    color: var(--color-success);
+}
+
+.pagination-btn:hover{
+    text-decoration: underline;
+}
+
+.btn--active{
+    
+    /* background-color: black; */
+    padding: 5%;
+    border-radius: 3px;
+    font-weight: 450;
+    color: white;
+    background-color: var(--color-success);
+}

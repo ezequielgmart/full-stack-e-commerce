@@ -1,22 +1,31 @@
-import { FiMapPin, FiSearch, FiShoppingCart } from "react-icons/fi";
+import { FiMapPin, FiSearch, FiShoppingCart,  FiChevronDown } from "react-icons/fi";
 
-export function AddressIcon(){
+interface IconsProps { 
+  className?:string;
+}
+export function AddressIcon({ className }:IconsProps){
     
   return (
 
-    <FiMapPin/>
+    <FiMapPin className={className}/>
 
   );
 }
 
-export function SearchIcon(){
+export function SearchIcon({ className }:IconsProps){
   return (
-    <FiSearch />
+    <FiSearch className={className}/>
   )
 }
 
-export function ShoppingCart(){
+export function ShoppingCart({ className }:IconsProps){
   return (
-    <FiShoppingCart />
+    <FiShoppingCart className={className}/>
+  )
+}
+
+export function ArrowDownIcon({ className }:IconsProps){
+  return (
+    <FiChevronDown  className={className}/>
   )
 }

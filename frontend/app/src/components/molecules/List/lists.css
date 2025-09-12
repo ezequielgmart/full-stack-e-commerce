@@ -1,0 +1,9 @@
+.list{
+    margin: 0;
+    list-style: none;
+}
+
+.list-container{
+    /* border: 1px solid red; */
+    margin-top: 50px ;
+}

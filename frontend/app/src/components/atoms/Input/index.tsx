@@ -1,16 +1,21 @@
 import './input.css'
 
-import type { InputProps } from '../../../types/index.ts'
+interface InputProps { 
+    type: string;
+    variant?:string;
+    size?:string;
+    placeholder?:string;
+    customClassName?:string; 
+}
+export default function Input({type, variant, size, placeholder, customClassName}:InputProps) {
 
-export default function Input({type, variant, size, placeholder}:InputProps) {
-    
     const className = `${type} ${type}--${variant} ${type}--${size}`
 
     return (
         
         <input 
             type={type}
-            className={className}
+            className={customClassName ? customClassName : className}
             placeholder={placeholder}
         />
 

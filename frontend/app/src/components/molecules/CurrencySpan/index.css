@@ -1,0 +1,35 @@
+/* El contenedor principal que usa Flexbox */
+.price-display {
+  display: flex;
+  
+  margin-top: 3%;
+  /* ESTA ES LA CLAVE PARA LA ALINEACIÓN VERTICAL */
+  /* 'flex-start' alinea los elementos en la parte superior. */
+  /* 'baseline' alinea los elementos según la base de su texto, también es una excelente opción. */
+  align-items: flex-start; 
+  
+  /* Opcional: para que no ocupe todo el ancho disponible */
+  width: fit-content;
+}
+
+/* El elemento para el símbolo de la moneda */
+.price-display__symbol {
+  font-size: 10px; /* Tamaño relativo al texto que lo rodea */
+  font-weight: 500;
+  margin-right: 2px;
+  /* El 'align-items' del padre ya se encarga de posicionarlo arriba */
+}
+
+/* El elemento para la parte entera (el número grande) */
+.price-display__integer {
+  font-size: 18px; /* Tamaño más grande */
+  font-weight: 500;
+  line-height: 0.8; /* Ajusta la altura de línea para que se vea compacto */
+}
+
+/* El elemento para los centavos */
+.price-display__cents {
+  font-size: 10px;
+  font-weight: 500;
+  margin-left: 2px;
+}

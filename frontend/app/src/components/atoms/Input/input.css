@@ -18,6 +18,21 @@
     color: var(--color-third-black);
 }
 
+.text--ligth {
+    border: 1px solid #e0e0e0;
+    background-color: var(--color-secondary);
+
+    border-radius: 3px;
+    padding: 0.5em;
+
+    outline: var(--color-success);
+    color: var(--color-third-black);
+}
+
+.text--medium{
+    font-size: 14px;
+}
+
 .text--big {
     padding: 0.4em;
     font-size: 1em;

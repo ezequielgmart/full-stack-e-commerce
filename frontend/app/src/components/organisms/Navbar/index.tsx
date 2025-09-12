@@ -11,9 +11,9 @@ export default function NavBar() {
                 {/* <LogoNavBar/>
                 <CurrentAddressBtn/> */}
                 <Link
-                href='/home'
-                type='logo'
-                variant='logo'
+                href='/'
+                type='white'
+                variant='white'
                 size='big'>
                 Eshop
                 </Link>

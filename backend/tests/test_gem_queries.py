@@ -53,7 +53,7 @@ def test_select_query_with_filter():
         Product.name,
         Product.description,
         Product.unit_price
-    ).where(Product.product_id).generate()
+    ).where(Product, Product.product_id).generate()
     
     expected_query = "SELECT products.product_id, products.name, products.description, products.unit_price FROM products AS products  WHERE product_id = $1"
     assert query_string == expected_query
@@ -98,6 +98,44 @@ def test_update_all_fields():
     ).where(User.primary_key).query()
 
     assert query_string == "UPDATE users SET username = $2, email = $3, password = $4, is_admin = $5 WHERE user_id = $1"
+
+# def test_functions_get_all_cover_img_array():
+#     query_string = Query(
+#         Product,
+#         Product.product_id,
+#         Product.name,
+#         Product.description,
+#         Product.unit_price,
+#         Category.category_name,
+#         ProductInventory.stock,
+#         Image.image_url
+#     ).join(
+#         ProductCategory, 
+#         Product.product_id, 
+#         ProductCategory.product_id
+#     ).join(
+#         ProductInventory, 
+#         Product.product_id, 
+#         ProductInventory.product_id
+#     ).join(
+#         ProductImage, 
+#         Product.product_id, 
+#         ProductImage.product_id
+#     ).join(
+#         Category, 
+#         ProductCategory.category_id, 
+#         Category.category_id, 
+#         ProductCategory
+#     ).join(
+#         Image, 
+#         ProductImage.image_id, 
+#         Image.image_id, 
+#         ProductImage
+#     ).where(ProductImage, ProductImage.is_cover).paginated().generate()
+    
+#     expected_query = "SELECT products.product_id, products.name, products.description, products.unit_price, products_inventory.stock, array_agg(images.image_url) AS images FROM products AS products JOIN products_inventory AS products_inventory ON products.product_id = products_inventory.product_id JOIN product_images AS product_images ON products.product_id = product_images.product_id JOIN images AS images ON product_images.image_id = images.image_id GROUP BY products.product_id, products.name, products.description, products.unit_price, products_inventory.stock"
+    
+#     assert query_string == expected_query
 
 def test_functions_get_all_array():
     query_string = Query(
@@ -155,7 +193,7 @@ def test_functions_array_by_id():
         ProductImage.image_id, 
         Image.image_id, 
         ProductImage
-    ).where(Product.product_id).generate()
+    ).where(Product, Product.product_id).generate()
     
     expected_query = "SELECT products.product_id, products.name, products.description, products.unit_price, products_inventory.stock, array_agg(images.image_url) AS images FROM products AS products JOIN products_inventory AS products_inventory ON products.product_id = products_inventory.product_id JOIN product_images AS product_images ON products.product_id = product_images.product_id JOIN images AS images ON product_images.image_id = images.image_id WHERE products.product_id = $1 GROUP BY products.product_id, products.name, products.description, products.unit_price, products_inventory.stock"
     
@@ -202,43 +240,39 @@ def test_functions_array_by_id():
     
 #     assert query_string == expected_query
 
-# def test_functions_get_ilike_paginated():
-#     query_string = Query(
-#         Product,
-#         Product.product_id,
-#         Product.name,
-#         Product.description,
-#         Product.unit_price,
-#         Category.category_name,
-#         ProductInventory.stock
-#     ).array_agg(
-#         Image,
-#         Image.image_url, 
-#         "images"
-#     ).join(
-#         ProductCategory, 
-#         Product.product_id, 
-#         ProductCategory.product_id
-#     ).join(
-#         ProductInventory, 
-#         Product.product_id, 
-#         ProductInventory.product_id
-#     ).join(
-#         ProductImage, 
-#         Product.product_id, 
-#         ProductImage.product_id
-#     ).join(
-#         Category, 
-#         ProductCategory.category_id, 
-#         Category.category_id, 
-#         ProductCategory
-#     ).join(
-#         Image, 
-#         ProductImage.image_id, 
-#         Image.image_id, 
-#         ProductImage
-#     ).ilike(Product.name).paginated().generate()
+def test_functions_get_ilike_paginated():
+    query_string = Query(
+            Product,
+            Product.product_id,
+            Product.name,
+            Product.description,
+            Product.unit_price,
+            Category.category_name,
+            ProductInventory.stock,
+            Image.image_url
+        ).join(
+            ProductCategory, 
+            Product.product_id, 
+            ProductCategory.product_id
+        ).join(
+            ProductInventory, 
+            Product.product_id, 
+            ProductInventory.product_id
+        ).join(
+            ProductImage, 
+            Product.product_id, 
+            ProductImage.product_id
+        ).join(
+            Category, 
+            ProductCategory.category_id, 
+            Category.category_id, 
+            ProductCategory
+        ).join(
+            Image, 
+            ProductImage.image_id, 
+            Image.image_id, 
+            ProductImage
+        ).where(ProductImage, ProductImage.is_cover).ilike(Product, Product.name).paginated().generate()
+    expected_query = "SELECT products.product_id, products.name, products.description, products.unit_price, categories.category_name, products_inventory.stock, array_agg(images.image_url) AS images FROM products AS products JOIN product_categories AS product_categories ON products.product_id = product_categories.product_id JOIN products_inventory AS products_inventory ON products.product_id = products_inventory.product_id JOIN product_images AS product_images ON products.product_id = product_images.product_id JOIN categories AS categories ON product_categories.category_id = categories.category_id JOIN images AS images ON product_images.image_id = images.image_id GROUP BY products.product_id, products.name, products.description, products.unit_price, categories.category_name, products_inventory.stock LIMIT $1 OFFSET $2"
     
-#     expected_query = "SELECT products.product_id, products.name, products.description, products.unit_price, categories.category_name, products_inventory.stock, array_agg(images.image_url) AS images FROM products AS products JOIN product_categories AS product_categories ON products.product_id = product_categories.product_id JOIN products_inventory AS products_inventory ON products.product_id = products_inventory.product_id JOIN product_images AS product_images ON products.product_id = product_images.product_id JOIN categories AS categories ON product_categories.category_id = categories.category_id JOIN images AS images ON product_images.image_id = images.image_id GROUP BY products.product_id, products.name, products.description, products.unit_price, categories.category_name, products_inventory.stock LIMIT $1 OFFSET $2"
-    
-#     assert query_string == expected_query
+    assert query_string == expected_query

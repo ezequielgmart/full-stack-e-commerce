@@ -1,0 +1,49 @@
+
+.main--home {
+  display: grid; 
+  
+  /* Esto crea una sola columna que ocupa todo el espacio.
+     Cada hijo directo (<div class="main-col">) se pondrá en una nueva fila. */
+  grid-template-columns: 1fr;
+  
+  /* Espacio vertical entre cada Riel y Section */
+  gap: 3rem; /* 48px */
+
+  /* Estilos para centrar el contenido y darle un ancho máximo */
+  width: 100%;
+  max-width: 1200px; /* Un ancho común para el contenido principal */
+  margin: 0 auto; /* Centra el <main> en la página */
+}
+
+.main--result{ 
+    /* border: 1px solid red; */
+    display: grid;
+    grid-template-columns: 20% 1fr;
+    margin-top:5%;
+}
+
+.main--admin {
+  display: grid; 
+
+  
+  /* border: 1px solid red; */
+  border-top-left-radius:5px ;
+  border-bottom-left-radius:5px ;
+  
+  /* Esto crea una sola columna que ocupa todo el espacio.
+     Cada hijo directo (<div class="main-col">) se pondrá en una nueva fila. */
+  /* grid-template-columns: 10% 1fr; */
+  
+  /* Espacio vertical entre cada Riel y Section */
+  gap: 3rem; /* 48px */
+
+  /* Estilos para centrar el contenido y darle un ancho máximo */
+  width: 100%;
+
+}
+
+.content-col{
+  /* border: 1px solid red; */
+  margin-left: 180px;
+
+}

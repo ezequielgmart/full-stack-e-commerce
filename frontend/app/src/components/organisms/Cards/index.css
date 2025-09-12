@@ -1,0 +1,67 @@
+@import url('../../../styles/_variables.css');
+
+.card { 
+    
+    border:1px solid rgb(224, 224, 224);
+    
+    display: grid;
+    grid-template-rows: repeat(2, 1fr);
+
+}
+
+
+.card-header{
+    
+    border:1px solid blue;
+}
+.card-body{
+
+    border:1px solid blue;
+    
+    display: grid;
+    grid-template-columns:15% 1fr;
+    gap: 5px;
+
+
+}
+.card-footer{
+    
+    border:1px solid blue;
+}
+
+.card-header-item-container{
+    
+    border:1px solid red;
+}
+
+.card-header-info-horizontal{
+    display: grid;
+    grid-template-columns: 10% repeat(12, 1fr);
+}
+
+.card-img-container{
+    
+    border:1px solid red;
+
+    /* display: grid;
+    
+    grid-template-rows: 10% 1fr;
+
+    gap: 5px; */
+}
+
+
+.item--highligh-primary{
+    border: 1px solid var(--color-success);
+    text-align: center;
+    border-radius: 5px;
+}
+
+.item--highligh-warning{
+    border: 1px solid var(--color-warning);
+    text-align: center;
+    color: var(--color-warning);
+    
+    border-radius: 5px;
+    padding: 3%;
+}

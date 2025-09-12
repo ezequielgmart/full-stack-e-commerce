@@ -1,0 +1,10 @@
+@import url('../../../styles/_variables.css');
+
+.item-row{
+    
+    border: 1px solid var(--color-border-secondary);
+}
+
+/* .item-row > td:hover{ 
+    background-color: black;
+} */

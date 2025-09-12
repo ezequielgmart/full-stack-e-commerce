@@ -3,13 +3,16 @@
 // import Span from '../../atoms/Span/span';
 import { Link, Span } from '../../atoms/index';
 
+import { useContext } from 'react';
+import { AuthContext } from '../../../context/AuthContext.ts';
+
 import NavSection from './index.tsx';
 
 import './index.css'
 
 export default function ProfileNavSection(){
-  const sectionTitle = 'Hello, sign in'
-  const address = 'Your Account'
+
+  const auth = useContext(AuthContext);
 
   return (
     <NavSection
@@ -20,18 +23,18 @@ export default function ProfileNavSection(){
         variant='darkligth'
         size='small'
         >
-          {sectionTitle}
+          {auth?.user ? `Hello, ${auth?.user.username }` : `Hello, sign in`}
         </Span>
       }
       
       body={
 
           <Link
-          href='/product/details'
-          type='link'
+          href={auth?.user?.role == 'admin' ? `/admin/dashboard` : `/`}
+          type='white'
           variant='white'
           size='medium'>
-          {address}
+          {auth?.user?.role == 'admin' ? `Admin Panel` : `Your account`}
           </Link>
 
       }

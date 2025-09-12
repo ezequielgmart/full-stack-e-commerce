@@ -1,50 +1,57 @@
 import type { ReactNode } from 'react';
 
-export interface ProductData {
-  itemName: string;
-  ImgSrc: string;
-
-}
-
-export interface FullProductData{
-    
-  itemName: string;
-  description:string;
-  unitPrice:number;
-  stock:number;
-  images:Array<string>;
-}
-
+/* this represents the Product object that I received from the backend */
 export interface Product { 
     product_id: string;
-    name: string;
-    description: string;
-    unit_price: number;
-    stock: number;
-    category_name: string;
-    images: Array<string>;
+    name: string; 
+    description: string; 
+    unit_price: number; 
+    stock: number | null; 
+    category_name:string;
+    image_url:string;
 }
 
-export interface ProductCover { 
-    product_id: string;
-    name: string;
-    description: string;
-    unit_price: number;
-    stock: number;
-    category_name: string;
-    image: string;
+export interface ProductsApiResponse {
+  info: {
+    total_items: number;
+    total_pages: number;
+    per_page: number;
+  };
+  data: Product[];
 }
 
+/* ******** Props for componentes that require a lsit of products *********  */
+export interface ListOfProductsProps{
+    data:Product[] | null
+} 
 
-/* ************* PROPS **********/
+export interface ProductCardProps {
+    product: Product;
+}
+/* ************* ATOMS PROPS **********/
 
 export interface BtnProps{
-    variant:string; // success / primary / alert
-    size:string; // big, medium, small
+    variant?:string; // success / primary / alert
+    size?:string; // big, medium, small
     onClick: ()=>void; // function 
-    children:ReactNode ; // the value the btn shows like Search / etc or the icon
+    children?:ReactNode ; // the value the btn shows like Search / etc or the icon
+    customClassName?:string;
 }
 
+
+export interface BtnLinkProps {
+  /** La URL a la que el enlace debe navegar. */
+    href: string;
+  
+    variant:string; //  Neutral, alert
+    size:string; // big, medium, small
+
+    type:string; // search, action
+  
+    /** El contenido del enlace (texto, ícono, etc.). */
+    children: ReactNode;
+
+}
 export interface ImgProps{
     
     src:string; // /products/laptop 1.jpg
@@ -57,9 +64,9 @@ export interface ImgProps{
 export interface InputProps{
     
     type:string; // text, text-area
-    variant:string; // success / primary / alert
-    size:string; // big, medium, small
-    placeholder:string; // something to show when it's empty
+    variant?:string; // success / primary / alert
+    size?:string; // big, medium, small
+    placeholder?:string; // something to show when it's empty
 
 }
 
@@ -75,36 +82,55 @@ export interface LinkProps{
 
 export interface SpanProps{ 
     
-    type:string; // Strong, Span
-    variant:string; //  Neutral, alert
-    size:string; // big, medium, small
-    children:ReactNode ; // the value the atom shows like Search / etc or the icon
+    type?:'strong' | 'span'; // Strong, Span
+    variant?:string; //  Neutral, alert
+    size?:'big' | 'medium' | 'small'; // big, medium, small
+    children?:ReactNode ; // the value the atom shows like Search / etc or the icon
 }
 
 export interface TitleProps{
-    level:string; // 1 for h1, 2 for h2, etc
-    variant:string; //  Neutral, alert
-    size:string; // big, medium, small
+    level:'1' | '2' | '3' | '4'; 
+    variant: 'neutral' | 'alert' | 'ligth' ; 
+    size:'big' | 'medium' | 'small'; 
+    weight?:'bold' | 'medium' | 'small'
     children:ReactNode ; // the value the atom shows like Search / etc or the icon
 }
 
-export interface BtnLinkProps {
-  /** La URL a la que el enlace debe navegar. */
-    href: string;
-  
-    variant:string; //  Neutral, alert
-    size:string; // big, medium, small
 
-    type:string; // search, action
+export interface ImageProps {
+  /** La URL de la fuente de la imagen. */
+  src: string;
   
-    /** El contenido del enlace (texto, ícono, etc.). */
-    children: ReactNode;
+  /** El texto alternativo y descriptivo de la imagen. Es OBLIGATORIO por accesibilidad. */
+  alt: string;
+  
+  /** La variante visual de la imagen (avatar, thumbnail, etc.). */
+  variant?: 'thumbnail' | 'avatar' | 'cover' | 'mini-thumbnail';
+  
+  /** Estrategia de carga. 'lazy' es ideal para imágenes que no están en la parte superior de la página. */
+  loading?: 'lazy' | 'eager';
+  
+}
+
+/* MOLECULES PROPS  */
+export interface MainProps{ 
+    className:string;
+    children:ReactNode
 
 }
-/* molecules  */
+
 export interface NavSectionProps{
     columns:'1' | '2' | '3' | '4';
     header:ReactNode;
     body:ReactNode;
+}
+
+export interface CardTemplateProps{ 
+
+    display: 'none' | 'grid';
+    cols:'1' | '2' | '3' | '4';
+
+    children:ReactNode
+
 }
 /* ************* END OF PROPS **********/

@@ -1,0 +1,53 @@
+@import url('../../../styles/_variables.css');
+
+.section {
+    border: 0.09em solid var(--color-border-secondary);
+}
+
+.top--none{ 
+    margin: 0;
+}
+
+.bottom--s{ 
+    margin-bottom:10em;
+} 
+
+.width--none{ 
+    width: 100%;
+}
+
+.width--s{ 
+    width: 90%;
+}
+
+.width--m{ 
+    width: 80%;
+}
+
+.width--l{ 
+    width: 70%;
+}
+
+.border--none{ 
+    border: none;
+}
+
+.position--center{ 
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.padding--s{ 
+    padding: 1%;
+}
+.background--light{ 
+    background-color: var(--color-background-secondary);
+}
+
+.background--primary{ 
+    background-color: var(--color-white);
+}
+
+.background--alt{ 
+    background-color: var(--color-black);
+}

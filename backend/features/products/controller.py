@@ -1,25 +1,40 @@
 
 from fastapi import HTTPException, status
 from typing import List
-from entities.product import Product, ProductResponse, ProductAllDetails
+from entities.product import Product, ProductApiResponse, ProductAllDetails, ProductAllDetailsWithImages, Pagination
 from .service import ProductService
+
+def format_dict_to_pydancti_model(pydantic_model, data:list[dict]) -> list[dict]: 
+
+    result: list = [pydantic_model(**item) for item in data]
+
+    return result
 
 class ProductController:
 
     def __init__(self, service:ProductService):
         self.service = service
     
-    async def get_all(self, limit:int, offset:int) -> list:
-        return await self.service.get_all_products(limit,offset)
+    async def get_all(self, limit:int, offset:int) -> ProductApiResponse:
+
+        response_from_service:dict = await self.service.get_all_products(limit,offset)
+
+        # Instanciamos el objeto Pagination directamente desde la clave 'info'
+        pagination: Pagination = Pagination(**response_from_service['info'])
+
+        # La lógica de los productos ya está bien, pero ahora usa la clave 'data'
+        products:list[ProductAllDetails] = format_dict_to_pydancti_model(ProductAllDetails, response_from_service['data'])
+        return ProductApiResponse(info=pagination, data=products)
+
     
     
     async def get_by_id(self, product_id: str) -> Product:
-        product = await self.service.get_by_id(product_id)
-        if not product:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"id '{product_id}' not found."
-            )
+        
+        response_from_service:dict = await self.service.get_by_id(product_id)
+
+        # La lógica de los productos ya está bien, pero ahora usa la clave 'data'
+        product:ProductAllDetailsWithImages = response_from_service
+        
         return product
     
     async def get_product_by_id_all_details(self, product_id: str) -> ProductAllDetails:
@@ -30,15 +45,7 @@ class ProductController:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"id '{product_id}' not found."
             )
-        
-        # data_for_response = {
-            
-        #     "product_id": uuid.UUID,
-        #     "name": str,
-        #     "description":str,
-        #     "unit_price":float,
-        # }
-        # product_with_all_details = ProductCategoryStock
+
         return product_vanilla
     
     async def get_all_products_by_category(self, filter_key_value:str, limit:int, offset:int) -> List[Product]:
@@ -63,6 +70,13 @@ class ProductController:
             limit=limit,
             offset=offset
         )
+        
+        # Instanciamos el objeto Pagination directamente desde la clave 'info'
+        pagination: Pagination = Pagination(**result['info'])
 
-        return result
+        # La lógica de los productos ya está bien, pero ahora usa la clave 'data'
+        products:list[ProductAllDetails] = format_dict_to_pydancti_model(ProductAllDetails, result['data'])
+        return ProductApiResponse(info=pagination, data=products)
+    
+
          

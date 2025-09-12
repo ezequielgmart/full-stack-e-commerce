@@ -1,0 +1,58 @@
+@import url('../../../styles/_variables.css');
+
+.article {
+    /* border: 1px solid red; */
+}
+
+.top--none{ 
+    margin: 0;
+}
+
+.width--none{ 
+    width: 100%;
+}
+
+.width--s{ 
+    width: 90%;
+}
+
+.width--m{ 
+    width: 80%;
+}
+
+.width--l{ 
+    width: 70%;
+}
+
+.position--center{ 
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.padding--s{ 
+    padding: 1%;
+}
+
+/* bg colors */
+
+.background--light{ 
+    background-color: var(--color-background-secondary);
+}
+
+.background--secondary{ 
+    background-color: var(--color-background-secondary);
+}
+
+.background--primary{ 
+    background-color: var(--color-white);
+}
+
+.background--alt{ 
+    background-color: var(--color-black);
+}
+
+/* border */
+
+.border--none { 
+    border: none;
+}

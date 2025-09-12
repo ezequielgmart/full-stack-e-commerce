@@ -55,6 +55,7 @@ class ProductImage(Schema):
     _tablename_ = "product_images"
     product_id=Column(type=uuid.UUID, primary_key = True)
     image_id=Column(type=int)
+    is_cover=Column(type=bool)
 
 class Category(Schema): 
     _tablename_ = "categories"

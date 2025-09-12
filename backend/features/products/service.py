@@ -1,19 +1,18 @@
 from typing import List, Optional
-from entities.product import Product,ProductRequest,ProductResponse, ProductAllDetails
 from .repository import ProductRepository
 
 class ProductService:
     def __init__(self, repository:ProductRepository):
         self.repository = repository
     
-    async def get_by_id(self, product_id: str) -> Optional[Product]:
+    async def get_by_id(self, product_id: str) -> Optional[dict]:
         return await self.repository.get_by_id(product_id)
     
     
     async def get_all_products(self, limit:int, offset:int):
         return await self.repository.get_all_products(limit, offset)
     
-    async def get_all_products_by_category(self, filter_key_value:str, limit:int, offset:int) -> List[Product]:
+    async def get_all_products_by_category(self, filter_key_value:str, limit:int, offset:int) -> List[dict]:
 
         result = await self.repository.get_all_products_by_category(
             filter_key_value=filter_key_value,
@@ -38,7 +37,7 @@ class ProductService:
 
         return result
 
-    async def get_product_by_id_all_details(self, product_id:str)->ProductAllDetails:
+    async def get_product_by_id_all_details(self, product_id:str)->dict:
 
         result = await self.repository.get_by_id(product_id)
 

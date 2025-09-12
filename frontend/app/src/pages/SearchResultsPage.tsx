@@ -3,7 +3,7 @@ import StorePageTemplate from "../templates/pages/StorePage";
 
 import SearchResultArticle from "../components/organisms/Article/SearchResultArticle";
 import FiltersAside from "../components/organisms/Aside/SearchResultsAside";
-import SearchResultHeader from "../components/organisms/PageHeader/SearchResultsHeader";
+import SearchResultHeader from "../components/organisms/PageHeader/StoreHeader";
 
 import RootTwoCols from "../components/organisms/Article/RootTwoCols";
 

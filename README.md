@@ -48,6 +48,9 @@ Admin and Store Views: The platform must have two distinct views. Your access le
 uvicorn main:app --reload
 ```
 
+```bash
+py \backend\server.py
+```
 
 
 ## Migrations

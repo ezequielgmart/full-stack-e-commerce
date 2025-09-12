@@ -1,0 +1,37 @@
+@import url('../../../styles/_variables.css');
+
+/* 1. El Contenedor: Lo usamos como el "ancla" para el posicionamiento del icono */
+.search-input-container {
+  position: relative;
+  width: 100%; /* O el ancho que necesites */
+
+}
+
+/* 2. El Icono: Lo sacamos del flujo y lo posicionamos de forma absoluta */
+.search-input-icon {
+  position: absolute;
+  
+  /* Lo centramos verticalmente. Este es un truco de CSS muy común. */
+  top: 50%;
+  transform: translateY(-50%);
+  
+  /* Lo posicionamos a la izquierda */
+  left: 12px;
+  
+  /* Estilos para el icono en sí */
+  color: #888; /* Un color gris sutil */
+  font-size: 16px; /* O el tamaño que prefieras */
+}
+
+/* 3. El Input: ¡Este es el paso más importante! */
+.search-input-field {
+  width: 100%;
+  box-sizing: border-box; /* Asegura que el padding no aumente el ancho total */
+  padding: 1.5%;
+  border-radius: 5px;
+  border: 1px solid var(--color-border-secondary);
+  /* AÑADIMOS PADDING A LA IZQUIERDA PARA HACER ESPACIO AL ICONO */
+  /* El texto del input no empezará hasta después de este espacio, 
+     por lo que no quedará debajo del icono. */
+  padding-left: 40px !important; /* Debe ser mayor que el 'left' + ancho del icono */
+}

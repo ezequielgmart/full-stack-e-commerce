@@ -1,5 +1,6 @@
 import uuid 
 from pydantic import BaseModel
+from typing import Optional
 from entities.pagination import Pagination
 
 class Product(BaseModel):
@@ -26,11 +27,21 @@ class ProductAllDetails(BaseModel):
     name: str
     description:str
     unit_price:float
+    stock: Optional[int] = None
+    category_name:str
+    image_url:Optional[str] = None
+
+class ProductAllDetailsWithImages(BaseModel):
+
+    product_id: uuid.UUID
+    name: str
+    description:str
+    unit_price:float
     stock:int
     category_name:str
-    images:list
+    images:Optional[list] = None
 
-class ProductResponse(BaseModel):
+class ProductApiResponse(BaseModel):
 
     info:Pagination
     data:list[ProductAllDetails]   

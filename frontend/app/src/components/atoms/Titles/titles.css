@@ -1,16 +1,29 @@
 @import url('../../../styles/_variables.css');
 
-.card-title{
-    margin: 0;
+.title{ 
+    margin-bottom: 0;
+    font-weight: 550;
 }
 
-.card-sub-title-secondary{
-    color: var(--color-secondary);
-    font-size: 0.7em;
+.title--small{ 
+    
+    font-size: 12px;
 }
 
-
-.product-detail-title-h1{
-        font-size: 1.5em;
-        font-weight: none;
+.title--big{ 
+    
+    font-size: 20px;
 }
+
+.title--ligth{ 
+    color: var(--color-success);
+}
+
+.title--neutral{ 
+    color: var(--color-dark);
+}
+
+.title--bold{ 
+    font-weight: 600;
+}
+

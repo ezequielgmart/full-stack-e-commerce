@@ -4,17 +4,13 @@
     text-decoration:none;
 }
 
-.btn { 
-    color: var(--color-black);
-
-}
 /* type */
-.link--logo{
+.link--white{
     color: var(--color-white);
 
 }
 
-.link--icon{
+.link--hyperlink{
     
     color: var(--color-white);
 }
@@ -24,8 +20,17 @@
 .link-white{ 
     color: var(--color-white);
 }
-/* sizes */
 
+.link--neutral{ 
+    
+    color: var(--color-success);
+}
+/* sizes */
+.link--small{ 
+    font-size: var(--text-m);
+    /* padding: 1.5%; */
+
+}
 
 .link--medium{ 
     font-size: var(--text-l);
@@ -41,7 +46,7 @@
 }
 
 /* pseudo classes */
-.link:visited {
+.link--white:visited {
     
     color: var(--color-white);
 }

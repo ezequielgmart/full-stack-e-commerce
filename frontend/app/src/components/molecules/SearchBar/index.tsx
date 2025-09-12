@@ -5,6 +5,7 @@ import { SearchIcon } from '../../atoms/icons.tsx';
 
 import { useNavigate } from 'react-router-dom';
 
+
 export default function SearchBar() {
     
     const navigate = useNavigate();
