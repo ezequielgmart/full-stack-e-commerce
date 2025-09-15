@@ -14,56 +14,22 @@ router = APIRouter()
 )
 async def get_products(
     search: str = Query(None),
+    sort_by: str = Query(None),
+    order: str = Query(None),
     limit: int = Query(10, ge=1, le=100),
     offset: int = Query(0, ge=0),
     controller: ProductController = Depends(get_product_controller)
 ):
     if search == None:
-        return await controller.get_all(limit=limit, offset=offset)
+        return await controller.get_all(limit=limit, offset=offset, sort_by=sort_by, order=order)
     else: 
         return await controller.get_all_products_by_name_like(
             key_value=search,
             limit=limit, 
-            offset=offset
+            offset=offset,
+            sort_by=sort_by,
+            order = order
         )
-
-
-# # 2. Rutas dinámicas más específicas
-# @router.get("/all/{category_id}",
-#     response_model=List[Product],
-#     summary="Obtener todos los products por categoria",
-#     description="Retorna una lista de todos los productos disponibles en el sistema."
-# )
-# async def get_products_category(
-#     category_id: str,
-#     limit: int = Query(10, ge=1, le=100),
-#     offset: int = Query(0, ge=0),
-#     controller: ProductController = Depends(get_product_controller)
-# ):
-#     return await controller.get_all_products_by_category(
-#         filter_key_value=category_id,
-#         limit=limit, 
-#         offset=offset
-#     )
-
-# @router.get("/",
-#     response_model=ProductApiResponse,
-#     summary="Obtener los product que el nombre coincida",
-#     description="Retorna una lista de productos"
-# )
-# async def search_products_by_name(
-#     product_name: str,
-#     limit: int = Query(10, ge=1, le=100),
-#     offset: int = Query(0, ge=0),
-#     controller: ProductController = Depends(get_product_controller)
-# ):
-#     # raise Exception(product_name)
-#     return await controller.get_all_products_by_name_like(
-#         key_value=product_name,
-#         limit=limit, 
-#         offset=offset
-#     )
-
 
 # 3. La ruta dinámica más genérica debe ir al final
 @router.get("/{product_id}",

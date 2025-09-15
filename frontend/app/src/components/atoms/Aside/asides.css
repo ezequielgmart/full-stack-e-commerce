@@ -1,8 +1,11 @@
+@import url('../../../styles/_variables.css');
 .aside{
 
 }
 
 .admin--aside-panel{
     position: fixed;
-
+    background-color: var(--color-primary);
+    height: 100%;
+    width: 200px;
 }

@@ -15,15 +15,16 @@ class ProductController:
     def __init__(self, service:ProductService):
         self.service = service
     
-    async def get_all(self, limit:int, offset:int) -> ProductApiResponse:
+    async def get_all(self, limit:int, offset:int, sort_by:str, order:str) -> ProductApiResponse:
 
-        response_from_service:dict = await self.service.get_all_products(limit,offset)
+        response_from_service:dict = await self.service.get_all_products(limit, offset, sort_by, order)
 
         # Instanciamos el objeto Pagination directamente desde la clave 'info'
         pagination: Pagination = Pagination(**response_from_service['info'])
 
         # La lógica de los productos ya está bien, pero ahora usa la clave 'data'
         products:list[ProductAllDetails] = format_dict_to_pydancti_model(ProductAllDetails, response_from_service['data'])
+
         return ProductApiResponse(info=pagination, data=products)
 
     

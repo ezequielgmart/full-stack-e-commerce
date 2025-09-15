@@ -1,9 +1,18 @@
 .list{
-    margin: 0;
     list-style: none;
+    /* border: 1px solid green; */
+    padding: 0;
+
 }
+
+.list > li{
+        /* margin-left: 1em; */
+
+}
+
 
 .list-container{
     /* border: 1px solid red; */
     margin-top: 50px ;
+
 }

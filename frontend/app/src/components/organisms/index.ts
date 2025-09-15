@@ -15,6 +15,6 @@ export {default as ProductsTableView } from './Table/ItemsTableView.tsx'
 // admin views and components
 export { default as AdminLayout } from './AdminViews/AdminLayout.tsx'
 export { default as AdminDashboardView } from './AdminViews/Dashboard.tsx'
-export { default as AdminProductsView } from './AdminViews/Products.tsx'
+export { default as AdminProductsView } from './AdminViews/AdminProductsView.tsx'
 
 export { default as AdminAside } from './Aside/AdminAside.tsx'

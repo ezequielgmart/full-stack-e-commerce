@@ -4,7 +4,8 @@
 
   --color-primary: #061b2e;
   --color-success: #0163cc;
-  
+  --color-primary-alt: #2c3e50;
+  --color-primary-alt-hover: rgba(255, 255, 255, 0.05);
   --color-success-hover: #0050a5;
   
   --color-warning:#B31000;
@@ -14,7 +15,7 @@
   --color-positive:#008500;
   --color-secondary: #e7e7e7;
   --color-background:#f3f3f3;
-
+  --color-option: #aeb7c0;
   --color-background-secondary: #fafcfd;
 
   --color-black: #000;

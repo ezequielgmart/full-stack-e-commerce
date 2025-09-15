@@ -24,8 +24,26 @@ class ProductRepository():
             - List[Dict[str, Any]] | None: A list of dictionaries representing the products,
               or None if no products are found for the specified category.
     """
-    async def get_all_products(self, limit: int, offset: int) -> list[dict]:
-    
+    async def get_all_products(self, limit: int, offset: int, sort_by:str, order:str) -> list[dict]:
+        
+        order_query_by = ''
+
+        if order == "ASC":
+            order_query_by = 'a'
+
+        elif order == "DESC":
+            order_query_by = 'z'
+
+        allowed_sort_columns = {
+            "name": Product.name,
+            "price": Product.unit_price,
+            "category": Category.category_name,
+            "stock": ProductInventory.stock
+        }
+
+        # Si 'sort_by' no es válido, usa 'Product.name' por defecto.
+        sort_column = allowed_sort_columns.get(sort_by, Product.name)
+
         query_string = Query(
             Product,
             Product.product_id,
@@ -57,7 +75,7 @@ class ProductRepository():
             ProductImage.image_id, 
             Image.image_id, 
             ProductImage
-        ).where(ProductImage, ProductImage.is_cover).paginated().generate()
+        ).where(ProductImage, ProductImage.is_cover).order_by(sort_column, order_query_by).paginated().generate()
 
 
         data = await self.gem_session.get_all(query=query_string, params=[True, limit, offset]) 

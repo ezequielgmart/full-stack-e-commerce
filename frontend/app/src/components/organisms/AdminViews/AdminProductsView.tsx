@@ -1,6 +1,6 @@
 
 import { Section } from '../../atoms';
-import { ProductsTableView } from '../../organisms/index';
+import { ProductsTableView } from '../index';
 import { PageHeaderContainer } from '../../molecules';
 
 export default function AdminProductsView (){

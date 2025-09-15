@@ -1,0 +1,36 @@
+@import url('../../../styles/_variables.css');
+
+.user-nav-option{ 
+    border-top: 1px solid var(--color-primary-alt);
+    margin-top: 32em;
+    font-size: 12px;
+
+    /* display: flex; */
+}
+.avatar-img{
+  width: 34px;
+  height: 34px;
+    border-radius: 50%;
+}
+
+.user-nav-option-user-container{
+    cursor:pointer;
+    display: flex;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+        
+}
+
+.profile-trigger{
+    
+    cursor:pointer;
+    display: flex;
+    background: var(--color-primary);
+        color: var(--color-option);
+        border: none;
+    gap: 0.6em;
+    /* border: 1px solid red; */
+        align-items: center;
+        margin-top: 0.7em;
+}

@@ -1,8 +1,12 @@
+/* molecules */
+
 export { default as SearchBar} from '../molecules/SearchBar/index.tsx'
+
 export { default as AddressNavSection} from './NavSection/AddressSection.tsx'
 export { default as ProfileNavSection } from './NavSection/ProfileSection.tsx'
 export { default as OrdersNavSection } from './NavSection/OrdersSection.tsx'
 export { default as CartNavSection } from './NavSection/CartSection.tsx'
+
 export { default as ListItem } from './List/AdminList.tsx'
 export { default as CurrencySpan } from './CurrencySpan/CurrencySpan.tsx';
 export { default as Card } from './Card/Card.tsx'
@@ -22,4 +26,6 @@ export { default as TableController } from './TableController/TableController.ts
 export { default as SearchInput } from './SearchInput/SearchInput.tsx'
 
 // admin components
+export { default as AsideNavOption } from '../molecules/AsideNavOption/AsideNavOption.tsx'
 export { default as AdminList } from '../molecules/List/AdminList.tsx';
+export { default as UserNavOption } from '../molecules/UserNavOption/UserNavOption.tsx'

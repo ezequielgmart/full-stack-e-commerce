@@ -1,36 +1,55 @@
-import { ListItem, Link, Aside } from '../../atoms';
-import { AdminList } from '../../molecules';
+import { ListItem, Aside, Link } from '../../atoms';
+
+import { AdminList, AsideNavOption, UserNavOption } from '../../molecules';
 import { useContext } from 'react';
 import { AuthContext } from '../../../context/AuthContext';
+
 import ListContainer from '../../molecules/List/ListContainer';
 
-interface Option { 
-    name: string;
-}
+import { 
+    DashboardIcon, 
+    ProductsIcon,
+    OrdersIcon,
+    UsersIcon,
+    SalesIcon,
+    InvetoryIcon,
+    GoToStoreIcon
+} from '../../atoms/icons';
 
-interface ListOptions { 
-    options:Array<Option>
-}
-export default function AdminAside ({ options }: ListOptions) { 
+import './admin.aside.css'
+
+export default function AdminAside () { 
     
     const auth = useContext(AuthContext);
-    
+
+
+    const options = [
+        {name:'Dashboard', href:'/admin/dashboard', icon:<DashboardIcon/>}, 
+        {name:'Products', href:'/admin/products', icon:<ProductsIcon/>}, 
+        {name:'Orders', href:'/admin/orders', icon:<OrdersIcon/>}, 
+        {name:'Users', href:'/admin/users', icon:<UsersIcon/>}, 
+        {name:'Sales', href:'/admin/sales', icon:<SalesIcon/>}, 
+        {name:'Inventory', href:'/admin/inventory', icon:<InvetoryIcon/>}, 
+        {name:'Store', href:'/', icon:<GoToStoreIcon/>}
+    ];
+
     return (
         <Aside classname='admin--aside-panel'>
             <ListContainer>
                 <AdminList>
-                    <Link href='/'>
-                            {auth?.user?.username}
-                    </Link>
                     {options.map((item, index)=>(
                         <ListItem key={index}>
-                            <Link href={item.href}>
-                                    {item.name}
-                            </Link>
+                            <AsideNavOption name={item.name} href={item.href} icon={item.icon}>
+                            </AsideNavOption>
                         </ListItem>
                     ))}
                 </AdminList>
+                <UserNavOption username={auth?.user?.username}/>
+                    
             </ListContainer>
+
+            
+
         </Aside>
     )
 }

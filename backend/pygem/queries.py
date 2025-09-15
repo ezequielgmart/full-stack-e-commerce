@@ -92,31 +92,109 @@ class Add():
         return [value for value in self.fields_on_schema.values()]
 
 class Query():
+
     def __init__(self, model, *fields):
         self.model = model
         self.clauses = []
 
         self.fields_to_select = fields if fields else "*"
+
         self.func_fields = []
         self.where_added: bool = False
-        self.paginated_items = []
         self.paginated_added = False
         self.like_added = False
+        self.paginated_items = []
         self.join_models = []
         self.joins = []
         self.left_joins = []
         self.left_joins_models = []
-
+        self.order_by_clause = ""
 
     def generate(self) -> str:
-        # ¡LA VALIDACIÓN OCURRE AQUÍ AHORA!
 
+        select_fields = self.__validate_models()
+        
+        # La parte que maneja la duplicación
+        if len(self.func_fields) > 0:
+            group_by_fields = ", ".join(select_fields)
+            self.clauses.append(f"GROUP BY {group_by_fields}")
+            
+            for fun_field in self.func_fields:
+                select_fields.append(fun_field)
+        
+        # this part generates the select clauses       
+        select_clause = self.__generate_select_clauses(select_fields)
+
+        # this part is for the main alias
+        main_table_alias = self.__generate_main_table_alias()
+        
+        # join clauses
+        join_clauses = self.__generate_join_clauses()
+        
+        # left join clauses
+        left_join_clauses = self.__generate_left_join_clauses()
+
+        # pagination clauses
+        pagination = self.__generate_pagination()
+
+        # where clauses
+        clauses_str = self.__generate_clauses_str()
+        
+        # where clauses
+        order_clauses = self.__generate_order_clauses()
+
+        # final query 
+        return f"SELECT {select_clause} FROM {self.model._tablename_} {main_table_alias} {join_clauses} {left_join_clauses} {clauses_str} {order_clauses} {pagination}".strip()
+    
+
+    """
+    
+        Internal Functions to generate the final SQL string 
+
+    """
+    def __generate_select_clauses(self, select_fields:list): 
+
+        return ", ".join(select_fields)
+    
+    def __generate_main_table_alias(self): 
+
+        return f"AS {self.get_table_alias(self.model)}"
+
+    def __generate_join_clauses(self): 
+
+        return " ".join([
+            f"JOIN {join['join_table']} AS {join['join_alias']} ON {join['on_condition']}"
+            for join in self.joins
+        ])
+
+    def __generate_left_join_clauses(self): 
+
+        return " ".join([
+            f"LEFT JOIN {join['join_table']} AS {join['join_alias']} ON {join['on_condition']}"
+            for join in self.left_joins
+        ])
+
+    def __generate_pagination(self): 
+
+        return " ".join(self.paginated_items)
+    
+    def __generate_clauses_str(self): 
+
+        return " ".join(self.clauses)
+
+    def __generate_order_clauses(self): 
+
+        return self.order_by_clause
+    # esta funcion creara la lista de fields para el select query. 
+    # validara que todos los campos sean parte de alguno de los modelos
+    def __validate_models(self): 
 
         select_fields = []
 
         if self.fields_to_select == "*":
 
             select_fields.append(f"{self.model._tablename_}.*")
+
 
         else:
             
@@ -132,34 +210,9 @@ class Query():
                 
                 if not found:
                     raise Exception(f"Field '{field.name}' not found on any of the specified models.")
-        
-        # La parte que maneja la duplicación
-        if len(self.func_fields) > 0:
-            group_by_fields = ", ".join(select_fields)
-            self.clauses.append(f"GROUP BY {group_by_fields}")
-            
-            for fun_field in self.func_fields:
-                select_fields.append(fun_field)
-        
-        select_clause = ", ".join(select_fields)
-        
-        main_table_alias = f"AS {self.get_table_alias(self.model)}"
-        
-        join_clauses = " ".join([
-            f"JOIN {join['join_table']} AS {join['join_alias']} ON {join['on_condition']}"
-            for join in self.joins
-        ])
-        
-        left_join_clauses = " ".join([
-            f"LEFT JOIN {join['join_table']} AS {join['join_alias']} ON {join['on_condition']}"
-            for join in self.left_joins
-        ])
-
-        pagination = " ".join(self.paginated_items)
-        clauses_str = " ".join(self.clauses)
-        
-        return f"SELECT {select_clause} FROM {self.model._tablename_} {main_table_alias} {join_clauses} {left_join_clauses} {clauses_str} {pagination}".strip()
-
+                
+        return select_fields        
+  
 
     def get_table_alias(self, model):
         # Using the full table name as the alias for clarity
@@ -176,7 +229,7 @@ class Query():
 
         else:
 
-            self.clauses.append(f"WHERE {filter_str} = $1")
+            self.clauses.append(f"WHERE {table_alias}.{filter_str} = $1")
 
         return self
 
@@ -260,9 +313,17 @@ class Query():
 
         return self    
     
-    def order_by(self, filter:str):
-        
-        self.clauses.append(f"ORDER BY {filter.name}")
+    def order_by(self, filter:str, order:str):
+
+        if order == "a": 
+
+            self.order_by_clause = f"ORDER BY {filter.name} ASC"
+
+        elif order == "z": 
+
+            
+            self.order_by_clause = f"ORDER BY {filter.name} DESC"
+
 
         return self    
     

@@ -26,9 +26,7 @@
   display: grid; 
 
   
-  /* border: 1px solid red; */
-  border-top-left-radius:5px ;
-  border-bottom-left-radius:5px ;
+
   
   /* Esto crea una sola columna que ocupa todo el espacio.
      Cada hijo directo (<div class="main-col">) se pondrá en una nueva fila. */

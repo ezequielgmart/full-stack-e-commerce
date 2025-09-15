@@ -1,0 +1,48 @@
+@import url('../../../styles/_variables.css');
+
+.aside-nav-option{
+    /* border: 1px solid red; */
+    display: flex;
+    align-items: center;
+    padding: 12px 24px; /* Espaciado interno (vertical y horizontal) */
+    gap: 1em;
+    color: white;
+    margin-bottom: 1em;
+    /* padding: 3%; */
+    transition: all 0.2s ease-in-out;
+    color: var(--color-option); /* Un gris/blanco sutil */
+}
+
+/* 2. Estilo para cuando el mouse pasa por encima de un enlace INACTIVO */
+/* Usamos :not(.active) para que no se aplique al que ya está seleccionado */
+.aside-nav-option:not(.active):hover {
+  background-color: var(--color-primary-alt-hover); /* Un fondo sutilmente más claro */
+  color: #FFFFFF; /* El texto se vuelve blanco puro al pasar el mouse */
+}
+
+.icon-container > span{
+    font-size: 17px;
+}
+
+.name-container > span{
+    font-size: 14px;
+}
+
+.aside-nav-option{
+      display: flex;
+  align-items: center; /* <-- La clave para la alineación vertical */
+  gap: 12px; /* Espacio entre el icono y el texto */
+text-decoration: none;
+
+}
+
+.active {
+  color: #FFFFFF; /* Texto e icono en blanco brillante */
+  font-weight: 500; /* Un poco más de grosor al texto */
+  
+  /* El color de fondo para la fila activa */
+  background-color: var(--color-primary-alt); /* Un azul/gris un poco más claro que el fondo general */
+  
+  /* La barra de acento vertical de color */
+  border-left: 2px solid #3498db; /* Un azul brillante */
+}
